@@ -6,13 +6,13 @@ Status: draft. Values marked `TBD` must be supplied or confirmed before submissi
 
 | Field | Value / requirement | Status |
 |---|---|---|
-| `projectName` | TBD | ☐ |
-| `leadName` | TBD | ☐ |
-| `email` | TBD | ☐ |
-| `size` | TBD (use the exact enum/format required by the submission API) | ☐ |
+| `projectName` | `NESUS AiOS` | ☑ |
+| `leadName` | `YKSunder` | ☑ |
+| `email` | `yk.bojak@gmail.com` | ☑ |
+| `size` | `2 - 4` (team: User + A.L.I.C.E. + agent swarm as collaborators) | ☑ |
 | `tracks` | `swarms`, `security`, `agents` | ☑ |
 | `nearAddress` | `yk.sunder.near` | ☑ |
-| `projectUrl` | TBD | ☐ |
+| `projectUrl` | `https://github.com/ykbojak-alt/nexus-aios` | ☑ |
 | `demoUrl` | TBD | ☐ |
 | `idea` | Draft below; must be 20–2000 characters | ☐ validate length |
 | `consent` | `true` | ☑ |
@@ -34,13 +34,13 @@ The exact endpoint, method, authentication, and canonical request/response schem
 
 ```json
 {
-  "projectName": "<TBD>",
-  "leadName": "<TBD>",
-  "email": "<TBD>",
-  "size": "<TBD>",
+  "projectName": "NESUS AiOS",
+  "leadName": "YKSunder",
+  "email": "yk.bojak@gmail.com",
+  "size": "2 - 4",
   "tracks": ["swarms", "security", "agents"],
   "nearAddress": "yk.sunder.near",
-  "projectUrl": "<TBD>",
+  "projectUrl": "https://github.com/ykbojak-alt/nexus-aios",
   "demoUrl": "<TBD>",
   "idea": "<20–2000 characters>",
   "consent": true
