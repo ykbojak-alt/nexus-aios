@@ -15,8 +15,12 @@ import urllib.request
 from dataclasses import dataclass
 
 TAVILY_URL = "https://api.tavily.com/search"
-NEBIUS_URL = "https://api.tokenfactory.nebius.com/v1/chat/completions"
-NEBIUS_MODEL = os.environ.get("NEBIUS_MODEL", "meta-llama/Llama-3.3-70B-Instruct")
+# Synthesis backend: OpenAI-compatible. Defaults to Inception Mercury (no billing),
+# Nebius Token Factory can be used by overriding SYNTH_BASE_URL/SYNTH_API_KEY.
+SYNTH_BASE_URL = os.environ.get("SYNTH_BASE_URL", "https://api.inceptionlabs.ai/v1")
+SYNTH_KEY_ENV = os.environ.get("SYNTH_KEY_ENV", "INCEPTION_API_KEY")
+NEBIUS_URL = f"{SYNTH_BASE_URL}/chat/completions"
+NEBIUS_MODEL = os.environ.get("NEBIUS_MODEL", "mercury-3")
 MAX_SOURCES = 8
 CONTENT_LIMIT = 1200
 
@@ -78,8 +82,8 @@ def build_context(sources: list[Source]) -> str:
 
 
 async def synthesize_nebius(query: str, context: str) -> str:
-    """Nebius Token Factory (OpenAI-compatible) synthesis strictly over context."""
-    key = os.environ.get("NEBIUS_API_KEY")
+    """Synthesis via OpenAI-compatible API strictly over context."""
+    key = os.environ.get(SYNTH_KEY_ENV) or os.environ.get("NEBIUS_API_KEY")
     if not key:
         source_url = next(iter(CONTEXT_URL_RE.findall(context)), None)
         if source_url is None:
