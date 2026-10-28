@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "roles": {
+    "architect": {"allow": ["plan", "decompose", "hire", "verify", "create_intent"]},
+    "research-agent": {"allow": ["search", "read_source", "cite"]},
+    "coder": {"allow": ["read_file", "write_file", "run_test"]},
+    "runner": {"allow": ["run_python", "run_test", "collect_output"]},
+    "auditor": {"allow": ["read_report", "read_log", "tally"]}
+  },
+  "deny": ["transfer_tokens", "sign_tx", "rm -rf", "format", "exfiltrate_env", "post_social", "export_private_key", "add_full_access_key", "delete_access_key", "transfer_near", "send_near"]
+}

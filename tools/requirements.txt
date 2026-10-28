@@ -1,0 +1,3 @@
+# Core tools, tests, and mock demo use only the Python standard library.
+# No pip install is required for offline tests or the mock swarm demo.
+# Optional for future real HTTP API integrations: httpx>=0.27
