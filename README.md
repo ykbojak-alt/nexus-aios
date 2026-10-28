@@ -40,3 +40,25 @@ User task
 
 - Do: read `policies/command_policy.json`. See: allowlist of executable commands per agent role.
 - Do: an agent tries a denied command. See: LoopGuard blocks execution and logs `denied` verdict — the wallet never signs a non-verified action.
+
+## Requirements
+
+- Python **3.11+**, **stdlib only** — no pip installs for the demo path.
+- Optional env for **live mode** (`research_agent_demo.py`): `TAVILY_API_KEY`, `NEBIUS_API_KEY`. Without them the swarm demo runs fully offline on stubs.
+
+## Do X — See Y (swarm run)
+
+- Do: `python tools/orchestrator_demo.py "What is NEAR Intents?"`.
+- See: architect decomposes the task into 3 stages (`swarm-1-research`, `swarm-2-code`, `swarm-3-audit`).
+- See: **3 workers bid on every stage** — `research-agent`, `coder`, `auditor` quote `{worker, sub_account, skill, task_id, price, checksum}`; architect verifies checksum/skill/sub-account and picks the **cheapest verified bid**. A forged bid (bad checksum) is rejected and listed in `rejected_bids`.
+- See: winners settled **each by a separate `NearIntentPayer.pay` receipt** — `solver` fields are NEAR-style sub-accounts: `research-agent.architect.near` (1.39), `coder.architect.near` (2.48), `auditor.architect.near` (1.02), all `status: settled`.
+- See: `audit_log` — 10 LoopGuard entries (`decompose`/`hire`/`verify`/`create_intent`) — replayable evidence of every gated action.
+
+## Tracks mapping
+
+| Track | Feature in this repo |
+|---|---|
+| swarms | `tools/orchestrator_demo.py` — 3-worker bid auction, cheapest verified bid wins, per-task settlement to `*.architect.near` sub-accounts |
+| security | `tools/loop_guard.py` + `policies/command_policy.json` — role allowlist (architect/research-agent/coder/runner/auditor), hard deny (`transfer_tokens`, `sign_tx`, `exfiltrate_env`), every action logged pre-execution |
+| agents | `tools/research_agent_demo.py` + `tools/test_agent.py` — research worker with `[Source: url]` citations and unverified-claim flagging; wallet-free `NearIntentPayer` stub keeps the NEAR Intent receipt contract |
+
