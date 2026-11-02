@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents (testnet)</title>
+<style>
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #07090d; display: flex; justify-content: center; font-family: "Segoe UI", system-ui, sans-serif; }
+.page { width: min(1100px, 96vw); margin: 24px 0 48px; }
+header.h { padding: 0 4px 14px; }
+header.h h1 { margin: 0; font-size: 22px; color: #eef2f8; font-weight: 700; }
+header.h p { margin: 4px 0 0; color: #8b93a3; font-size: 14px; }
+.term { background: #0b0f16; border: 1px solid #1d2635; border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.7); }
+.bar { display: flex; align-items: center; gap: 10px; margin: 0 18px 12px; padding: 12px 0; border-bottom: 1px solid #1d2635; font-size: 13px; color: #8b93a3; }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; }
+.ctl { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.ctl button { background: #131a26; color: #d7dce6; border: 1px solid #1d2635; border-radius: 8px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; min-height: 34px; }
+.ctl button:hover { border-color: #3a4763; }
+.ctl select { background: #131a26; color: #d7dce6; border: 1px solid #1d2635; border-radius: 8px; padding: 6px 8px; font: inherit; font-size: 13px; }
+.progress { height: 3px; background: #131a26; }
+.progress i { display: block; height: 100%; width: 0; background: #5fd08c; transition: width .1s linear; }
+.out { margin: 0; padding: 18px 22px 24px; min-height: 120px; max-height: 62vh; overflow-y: auto; font: 400 14px/1.5 "Cascadia Mono", Consolas, monospace; color: #d7dce6; }
+.out .l { white-space: pre-wrap; word-break: break-word; }
+.cur { display: inline-block; width: .6em; background: #5fd08c; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.done-badge { display: none; color: #5fd08c; font-size: 12px; margin-left: 8px; }
+.done .done-badge { display: inline; }
+section { margin-top: 22px; }
+section h2 { margin: 0 0 10px; font-size: 16px; color: #eef2f8; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.card { background: #0b0f16; border: 1px solid #1d2635; border-radius: 14px; padding: 16px 18px; }
+.card h3 { margin: 0 0 10px; font-size: 14px; color: #8b93a3; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+ol.tx { list-style: none; margin: 0; padding: 0; }
+ol.tx li { display: flex; align-items: baseline; gap: 8px; padding: 7px 0; border-bottom: 1px solid #131a26; font-size: 13px; }
+ol.tx li:last-child { border-bottom: none; }
+ol.tx .act { font-family: "Cascadia Mono", Consolas, monospace; color: #7aa2f7; min-width: 150px; }
+ol.tx .mark { min-width: 18px; font-weight: 700; }
+ol.tx .mark.ok { color: #5fd08c; }
+ol.tx .mark.bad { color: #f2607a; }
+ol.tx a { color: #54d2e0; text-decoration: none; font-family: "Cascadia Mono", Consolas, monospace; font-size: 12.5px; word-break: break-all; }
+ol.tx a:hover { text-decoration: underline; }
+ol.tx .t { color: #6b7484; font-size: 12px; }
+ol.tx .t.dup { font-size: 11px; }
+ol.roll { list-style: none; margin: 0; padding: 0; }
+ol.roll li { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px solid #131a26; font-size: 13px; }
+ol.roll li:last-child { border-bottom: none; }
+ol.roll .mark { min-width: 18px; font-weight: 700; }
+ol.roll .mark.ok { color: #5fd08c; }
+ol.roll .mark.bad { color: #f2607a; }
+ol.roll .mark.skip { color: #6b7484; }
+ol.roll .act { font-family: "Cascadia Mono", Consolas, monospace; color: #7aa2f7; min-width: 150px; }
+ol.roll a { color: #54d2e0; text-decoration: none; font-family: "Cascadia Mono", Consolas, monospace; font-size: 12.5px; word-break: break-all; }
+ol.roll a:hover { text-decoration: underline; }
+ol.roll .note { color: #6b7484; font-size: 12px; }
+.rep { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: baseline; }
+.rep .k { color: #8b93a3; font-size: 13px; }
+.rep .v { font-family: "Cascadia Mono", Consolas, monospace; font-size: 26px; font-weight: 700; color: #5fd08c; }
+.rep .v.sub { font-size: 15px; color: #d7dce6; font-weight: 400; }
+.rep .agent { font-family: "Cascadia Mono", Consolas, monospace; color: #eef2f8; font-size: 15px; }
+footer { margin-top: 26px; color: #6b7484; font-size: 12.5px; line-height: 1.6; }
+footer a { color: #54d2e0; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+</style></head>
+<body><div class="page">
+<header class="h"><h1>NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents (testnet)</h1>
+<p>Реплей живого демо-прогона на NEAR testnet: аукцион, эскроу-контракт, NEAR Intents. Источник — реальный лог с живыми TxHash, replay + верификация по explorer.</p></header>
+
+<div class="term">
+  <div class="bar">
+    <span class="dot" style="background:#f2607a"></span>
+    <span class="dot" style="background:#f0c35b"></span>
+    <span class="dot" style="background:#5fd08c"></span>
+    &nbsp;grand-demo-live — терминал
+    <span class="done-badge">replay завершён</span>
+    <div class="ctl">
+      <button id="playpause" type="button">Пауза</button>
+      <button id="restart" type="button">Сначала</button>
+      <label>Скорость
+      <select id="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+    </div>
+  </div>
+  <div class="progress"><i id="prog"></i></div>
+  <div class="out" id="out" aria-live="polite"><div class="l" id="curline"><span class="cur"></span></div></div>
+</div>
+
+<section class="grid">
+  <div class="card"><h3>Транзакции (testnet.nearblocks.io)</h3><ol class="tx" id="txlist"></ol></div>
+  <div class="card"><h3>Сводка вызовов контракта [5/6]</h3><ol class="roll" id="rolllist"></ol></div>
+  <div class="card"><h3>Репутация агента</h3><div class="rep" id="repbox"></div></div>
+</section>
+
+<footer>
+  Источник: <a href="../evidence/grand-demo-live-2026-11-02.log" target="_blank" rel="noopener">docs/evidence/grand-demo-live-2026-11-02.log</a>
+  (NEXUS GRAND DEMO, live-прогон на NEAR testnet, 2026-11-02). Страница статическая — автопубликация через GitHub Pages из docs/.
+</footer>
+</div>
+<script>
+const LINES = [" ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗", " ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝", " ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗", " ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║", " ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║", " ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝", "      A I   O P E R A T I N G   S Y S T E M", "══════════════════════════════════════════════════════════════════", "  NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents", "══════════════════════════════════════════════════════════════════", "", "[1/6] Менеджер получил задачу: 'What is NEAR Intents and how does it enable agent payments?'", "    manager=yksunder.testnet  agent=research-bot.testnet  budget=0.050 NEAR", "    contract=nexus-escrow.yksunder.testnet (strict, fallback отключён)", "", "[2/6] Контракт и аукцион (live log):", "──────────────────────────────────────────────────────────────────", "    ⛓️  [contract] nexus-escrow.yksunder.testnet deployed, balance=2.495628 NEAR", "    ⛓️  [contract] register_agent       already registered (stake=1.000000 NEAR, key=ed25519:4mSpipPSbmBdJUgodowiYFzU3htebWwZxpZj7WYLuJwk) → ", "    [auction] менеджер yksunder.testnet объявил задачу auction-013746-a0bbe5 — бюджет 0.050 NEAR", "    ⛓️  [contract] create_task          TxHash: 8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG → nexus-escrow.yksunder.testnet", "    ⛓️  [contract] submit_bid           TxHash: EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4 → nexus-escrow.yksunder.testnet", "    [bid] research-agent   0.0239 NEAR — verified", "    ⛓️  [contract] submit_bid           TxHash: Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L → nexus-escrow.yksunder.testnet — FAILED: WebAssembly trap: An `unreachable` opcode was executed.", "    🛡️  [bid] freelancer       0.0159 NEAR — REJECTED (ed25519_verify failed: WebAssembly trap: An `unreachable` opcode was executed.)", "    [bid] analyst          0.0272 NEAR — local quote (not registered on-chain)", "    🏆 [auction] победитель: research-agent @ 0.0239 NEAR", "    ⛓️  [contract] accept_bid           TxHash: 6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC → nexus-escrow.yksunder.testnet", "    [work] research-agent: Plan→Act→Observe (live при ключах, иначе stub)", "    [work] research-agent завершил: sources=2 mode=live verified=True", "    ⛓️  [contract] submit_work          TxHash: E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB → nexus-escrow.yksunder.testnet", "    ⛓️  [contract] verify_and_release   TxHash: 3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn → nexus-escrow.yksunder.testnet", "    ⚡ [settle] intent intent-857daad5d8cff909 → status=settled mode=contract", "──────────────────────────────────────────────────────────────────", "", "[3/6] Победитель research-agent (research-bot.testnet) выполняет работу", "    mode=live sources=2 verified=True", "    URL 200 https://www.near.org/intents", "    URL 200 https://docs.near.org/chain-abstraction/intents/overview", "", "[4/6] Сдача работы и расчёт через контракт:", "    NEAR Intent:", "    {", "      \"action\": \"pay_for_service\",", "      \"service\": \"Tavily_Search\",", "      \"amount\": 0.0239,", "      \"currency\": \"NEAR\",", "      \"intent_id\": \"intent-857daad5d8cff909\",", "      \"payer\": \"yksunder.testnet\",", "      \"solver\": \"research-bot.testnet\",", "      \"task_id\": \"auction-013746-a0bbe5\",", "      \"contract\": \"nexus-escrow.yksunder.testnet\",", "      \"deadline_ms\": 1793659402342,", "      \"ts\": 1793659102342", "    }", "    verify_and_release: TxHash: 3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn", "      Explorer: https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn", "", "[5/6] TxHash вызовов контракта:", "    ↺ register_agent       already registered  stake=1.000000 NEAR", "    ✓ create_task          8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG", "    ✓ submit_bid           EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4", "    ✗ submit_bid           Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L  (WebAssembly trap: An `unreachable` opcode was executed.)", "    ✓ accept_bid           6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC", "    ✓ submit_work          E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB", "    ✓ verify_and_release   3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn", "", "[6/6] Балансы (liquid, NEAR):", "    research-bot.testnet   0.357194 → 0.380482  (+0.023288)", "    yksunder.testnet       2.109869 → 2.085296  (-0.024573)", "    репутация research-bot.testnet: completed=11 failed=0 active=True", "    escrow=0.000000 NEAR  burned=1.100000 NEAR  (v2 counters)", "", "══════════════════════════════════════════════════════════════════", "  ФИНАЛЬНЫЙ ОТВЕТ", "──────────────────────────────────────────────────────────────────", "  │ NEAR Intents — это многосетевой протокол транзакций, в котором", "  │ пользователи и ИИ-агенты формулируют желаемый результат (например,", "  │ «обменять токен A на токен B»), а не конкретные шаги исполнения [Source:", "  │ https://docs.near.org/chain-abstraction/intents/overview]. Заявка", "  │ (intent) транслируется в сеть маркет-мейкеров, называемых решателями", "  │ (solvers) [Source:", "  │ https://docs.near.org/chain-abstraction/intents/overview].", "  │ Децентрализованная оффчейн-сеть решателей конкурирует за выполнение", "  │ запроса наиболее оптимальным способом и предлагает пользователю/агенту", "  │ лучшую котировку на утверждение [Source:", "  │ https://docs.near.org/chain-abstraction/intents/overview].", "", "  │ Для агентских платежей это означает, что ИИ-агент может автономно", "  │ выразить намерение (например, оплатить задачу или перевести активы), а", "  │ сеть решателей находит и исполняет наилучший способ его выполнения —", "  │ будь то своп, мост или кросс-чейн транзакция [Source:", "  │ https://www.near.org/intents]. NEAR Intents абстрагирует сложность", "  │ кросс-чейн исполнения, позволяя ценности перемещаться мгновенно туда,", "  │ где это нужно [Source: https://www.near.org/intents].", "", "  │ Источники:", "  │ 1. https://www.near.org/intents — NEAR Intents | Simplifying Web3", "  │ Interactions", "  │ 2. https://docs.near.org/chain-abstraction/intents/overview — NEAR", "  │ Intents - NEAR Docs", "──────────────────────────────────────────────────────────────────", "  Источники:", "    - https://www.near.org/intents", "    - https://docs.near.org/chain-abstraction/intents/overview", "══════════════════════════════════════════════════════════════════", "verified=True | audit_log: decompose → hire → create_task → submit_bid → submit_bid → accept_bid → submit_work → verify → create_intent → verify_and_release", "══════════════════════════════════════════════════════════════════"];
+const TXS = [{"action": "create_task", "h": "8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG", "failed": false, "d": false}, {"action": "submit_bid", "h": "EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4", "failed": false, "d": false}, {"action": "submit_bid", "h": "Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L", "failed": true, "d": false}, {"action": "accept_bid", "h": "6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC", "failed": false, "d": false}, {"action": "submit_work", "h": "E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB", "failed": false, "d": false}, {"action": "verify_and_release", "h": "3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn", "failed": false, "d": false}, {"action": "verify_and_release", "h": "3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn", "failed": false, "d": true}];
+const ROLLUP = [{"mark": "↺", "action": "register_agent", "h": null, "note": "already registered  stake=1.000000 NEAR"}, {"mark": "✓", "action": "create_task", "h": "8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG", "note": ""}, {"mark": "✓", "action": "submit_bid", "h": "EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4", "note": ""}, {"mark": "✗", "action": "submit_bid", "h": "Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L", "note": ""}, {"mark": "✓", "action": "accept_bid", "h": "6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC", "note": ""}, {"mark": "✓", "action": "submit_work", "h": "E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB", "note": ""}, {"mark": "✓", "action": "verify_and_release", "h": "3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn", "note": ""}];
+const REP = {"agent": "research-bot.testnet", "completed": 11, "failed": 0, "active": "True"};
+const ESCROW = {"escrow": "0.000000", "burned": "1.100000"};
+
+const out = document.getElementById('out');
+const curline = document.getElementById('curline');
+const prog = document.getElementById('prog');
+const playBtn = document.getElementById('playpause');
+let i = 0, timer = null, playing = true, speedMul = 1;
+
+function delayFor(line) {
+  const boundary = /^\s*(\[\d\/6\]|═|───)/.test(line);
+  return Math.round((boundary ? 320 : 80) / speedMul);
+}
+
+function step() {
+  if (!playing) return;
+  if (i >= LINES.length) {
+    out.parentElement.classList.add('done');
+    clearTimeout(timer);
+    return;
+  }
+  const ln = LINES[i];
+  const el = document.createElement('div');
+  el.className = 'l';
+  el.textContent = ln.length ? ln : ' ';
+  out.insertBefore(el, curline);
+  curline.scrollIntoView({ block: 'nearest' });
+  i += 1;
+  prog.style.width = (i / LINES.length * 100).toFixed(1) + '%';
+  timer = setTimeout(step, delayFor(ln));
+}
+
+function restart() {
+  out.querySelectorAll('.l').forEach((n) => { if (n !== curline) n.remove(); });
+  out.parentElement.classList.remove('done');
+  i = 0;
+  prog.style.width = '0%';
+  playing = true;
+  playBtn.textContent = 'Пауза';
+  step();
+}
+
+playBtn.onclick = () => {
+  if (i >= LINES.length) { restart(); return; }
+  playing = !playing;
+  playBtn.textContent = playing ? 'Пауза' : 'Продолжить';
+  if (playing) step();
+};
+
+document.getElementById('speed').onchange = (e) => { speedMul = Number(e.target.value); };
+document.getElementById('restart').onclick = restart;
+
+const txlist = document.getElementById('txlist');
+for (const t of TXS) {
+  const li = document.createElement('li');
+  const a = document.createElement('a');
+  a.href = 'https://testnet.nearblocks.io/txns/' + t.h;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.title = t.h;
+  a.textContent = t.h.slice(0, 12) + '…' + t.h.slice(-8);
+  const mark = document.createElement('span');
+  mark.className = 'mark ' + (t.failed ? 'bad' : 'ok');
+  mark.textContent = t.failed ? '✗' : '✓';
+  const act = document.createElement('span');
+  act.className = 'act';
+  act.textContent = t.action;
+  const tspan = document.createElement('span');
+  tspan.className = 't' + (t.d ? ' dup' : '');
+  tspan.textContent = t.d ? 'повторяющийся хэш (уникальных — 6)' : '';
+  li.append(mark, act, a, tspan);
+  txlist.appendChild(li);
+}
+
+const rolllist = document.getElementById('rolllist');
+for (const r of ROLLUP) {
+  const li = document.createElement('li');
+  const mark = document.createElement('span');
+  const cls = r.mark === '✓' ? 'ok' : r.mark === '✗' ? 'bad' : 'skip';
+  mark.className = 'mark ' + cls;
+  mark.textContent = r.mark;
+  const act = document.createElement('span');
+  act.className = 'act';
+  act.textContent = r.action;
+  if (r.h) {
+    const a = document.createElement('a');
+    a.href = 'https://testnet.nearblocks.io/txns/' + r.h;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.title = r.h;
+    a.textContent = r.h.slice(0, 12) + '…' + r.h.slice(-8);
+    li.append(mark, act, a);
+  } else {
+    const note = document.createElement('span');
+    note.className = 'note';
+    note.textContent = r.note;
+    li.append(mark, act, note);
+  }
+  rolllist.appendChild(li);
+}
+
+const repbox = document.getElementById('repbox');
+repbox.innerHTML = '';
+const agent = document.createElement('span');
+agent.className = 'agent';
+agent.textContent = REP.agent;
+repbox.appendChild(agent);
+const mk = (k, v, sub) => {
+  const d = document.createElement('div');
+  const kk = document.createElement('span');
+  kk.className = 'k';
+  kk.textContent = k;
+  const vv = document.createElement('span');
+  vv.className = 'v' + (sub ? ' sub' : '');
+  vv.textContent = v;
+  d.append(kk, document.createElement('br'), vv);
+  repbox.appendChild(d);
+};
+mk('completed', REP.completed, false);
+mk('failed', String(REP.failed), true);
+mk('active', REP.active, true);
+if (ESCROW) {
+  mk('escrow', ESCROW.escrow + ' NEAR', true);
+  mk('burned', ESCROW.burned + ' NEAR', true);
+}
+step();
+</script></body></html>
