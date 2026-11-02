@@ -1,64 +1,126 @@
-# NEXUS AiOS — NEAR Hackathon Submission
+# NEXUS Research Agent (NEAR hackathon)
 
-Tracks: `swarms`, `security`, `agents`
+## Relationship to NEXUS AiOS
 
-## Problem
+This repository is a hackathon-focused slice. The full NEXUS AiOS (UI,
+orchestration, Unreal integration) lives in our private repo. Here you can
+see the Research Agent, the AI-2 runtime adapter, and the security policies.
 
-- Do: give a task to a single AI agent. See: it works alone, is not accountable, cannot pay for help.
-- Do: read agent output. See: no verifiable payment trail, no policy guard for agent-owned wallets.
+## Что здесь
 
-## Solution
+Живой agent loop: вопрос → Plan (LLM) → Act (Tavily search) → Observe
+(оценка LLM) → повтор до 3 итераций → синтез со ссылками `[Source: URL]`.
 
-- Do: run NEXUS AiOS. See: a swarm of role-specialized agents (Architect, Coder, Runner, Auditor) coordinate on one task.
-- Do: make a request. See: Architect agent hires a worker agent and pays it through a NEAR Intent — every task has an on-chain-verifiable payment record.
-- Do: inspect `LoopGuard` + `command_policy` logs. See: every agent action passes a policy gate before touching a wallet or shell.
+## Быстрый старт (всё запускается из этой папки)
 
-## How to run
-
-- Do: `git clone <repo> && cd near-hackathon-nexus`. See: repo with `tools/`, `docs/`, `policies/`.
-- Do: `python tools/research_agent_demo.py "your question"`. See: research answer with `[Source: url]` citations.
-- Do: `python tools/orchestrator_demo.py`. See: Architect hires Coder, pays via `NearIntentPayer` stub, prints intent receipt.
-
-## Architecture
-
-```
-User task
-  → Architect agent (plans, decomposes, hires workers)
-  → Worker agents (C.O.D.E.X./research/runner) execute tasks
-  → NearIntentPayer posts NEAR Intent on task success
-  → LoopGuard + command_policy validate every command before execution
-  → Verdict + payment receipts + audit log
+```powershell
+python tools/hackathon_grand_demo.py "What is NEAR Intents?" # GRAND DEMO: аукцион → интент → tx
+python -m tools.research_agent "Что такое NEAR Protocol?"   # живой агент
+python tools/orchestrator_demo.py "What is NEAR Intents?"   # swarm-аукцион (JSON)
+python tools/research_agent_demo.py "What is NEAR Intents?" # research → cite_check → payment
+python tests/test_research_agent.py                       # 37 тестов, офлайн
+python tools/test_agent.py                                # 13 тестов, офлайн
 ```
 
-## NEAR Integration
+Зависимостей нет: `tools/requirements.txt` — чистый stdlib, `pip install`
+не нужен.
 
-- Do: Architect agent emits a `create_intent` call naming the worker, task hash, and reward. See: NEAR Intent settles payment to the worker agent's account.
-- Do: a worker completes a verified task. See: `NearIntentPayer.pay(worker_id, task_id, amount)` produces an intent receipt `{intent_id, solver, status}`.
-- Do: inspect `docs/near_architecture.md`. See: full intent lifecycle and LoopGuard policy mapping.
+## Ключи и модели — две конфигурации
 
-## Security (LoopGuard)
+**`.env.example` оставляет LLM-поля пустыми.** Без заполненных `LLM_*` и
+AI-2-алиасов standalone-клиент использует модель `gpt-4o-mini` и endpoint
+`https://api.openai.com/v1`. Cohere через OpenRouter и другие OpenAI-
+совместимые провайдеры подключаются явной настройкой `LLM_MODEL`,
+`LLM_BASE_URL` и `LLM_API_KEY`. AI-2 runtime с `mercury-3` на
+`api.inceptionlabs.ai` — отдельная конфигурация.
 
-- Do: read `policies/command_policy.json`. See: allowlist of executable commands per agent role.
-- Do: an agent tries a denied command. See: LoopGuard blocks execution and logs `denied` verdict — the wallet never signs a non-verified action.
+Резолв `research_agent_clients.env()`: **прямое имя** (`LLM_*`,
+`TAVILY_API_KEY`, `NEAR_*`) из `.env`/`os.environ` → **алиасы ai2**
+(`OPENAI_*`, `AI2_MODEL_*`) из файла настроек `AI2_ENV_FILE` → `os.environ`.
+Прямое имя бьёт алиас — поэтому `.env` с `LLM_*` даёт Cohere-контур,
+а когда `LLM_*` нет, standalone наследует настройки рантайма
+(mercury-3/inceptionlabs, ключ — из пула `AI2_PROVIDER_KEYS_JSON` по URL
+endpoint'а, как `resolve_openai_env`).
 
-## Requirements
+| имя агента | standalone (.env) | фолбэк — настройки ai2 |
+|---|---|---|
+| `LLM_MODEL` | пусто в примере; без алиаса — `gpt-4o-mini` | `AI2_MODEL_EXECUTOR` → `mercury-3` |
+| `LLM_BASE_URL` | пусто в примере; без алиаса — `https://api.openai.com/v1` | `OPENAI_BASE_URL` → `api.inceptionlabs.ai` |
+| `LLM_API_KEY` | `LLM_API_KEY` напрямую | пул `AI2_PROVIDER_KEYS_JSON` по URL → `OPENAI_API_KEY`/`INCEPTION_API_KEY` |
+| `TAVILY_API_KEY` | `TAVILY_API_KEY` | `AI2_TAVILY_API_KEY` (user env) |
+| `NEAR_*` | `.env` (см. `.env.example`) | — |
 
-- Python **3.11+**, **stdlib only** — no pip installs for the demo path.
-- Optional env for **live mode** (`research_agent_demo.py`): `TAVILY_API_KEY`, `NEBIUS_API_KEY`. Without them the swarm demo runs fully offline on stubs.
+## Адаптер рантайма AI-2
 
-## Do X — See Y (swarm run)
+`docs/ai2_runtime_example/research_agent.py` — reference implementation
+from the main NEXUS AiOS runtime: тот же цикл внутри рантайма, где вызовы
+идут через `call_model` (бюджет, метрики, траектория), а поиск виден как
+`tool_call[tavily_search]` + `research_iteration` (plan/search/observe/
+answer). Сам рантайм живёт в приватном репо NEXUS AiOS — здесь адаптер
+для судей; рабочая standalone-копия цикла — `tools/research_agent.py`.
 
-- Do: `python tools/orchestrator_demo.py "What is NEAR Intents?"`.
-- See: architect decomposes the task into 3 stages (`swarm-1-research`, `swarm-2-code`, `swarm-3-audit`).
-- See: **3 workers bid on every stage** — `research-agent`, `coder`, `auditor` quote `{worker, sub_account, skill, task_id, price, checksum}`; architect verifies checksum/skill/sub-account and picks the **cheapest verified bid**. A forged bid (bad checksum) is rejected and listed in `rejected_bids`.
-- See: winners settled **each by a separate `NearIntentPayer.pay` receipt** — `solver` fields are NEAR-style sub-accounts: `research-agent.architect.near` (1.39), `coder.architect.near` (2.48), `auditor.architect.near` (1.02), all `status: settled`.
-- See: `audit_log` — 10 LoopGuard entries (`decompose`/`hire`/`verify`/`create_intent`) — replayable evidence of every gated action.
+## Architecture note
 
-## Tracks mapping
+Two deliberate model stacks: the AI-2 runtime runs `mercury-3` via
+`api.inceptionlabs.ai` (`AI2_MODEL_EXECUTOR`/`OPENAI_BASE_URL` in the
+settings file, key from the `AI2_PROVIDER_KEYS_JSON` pool by endpoint
+URL), while this standalone repo runs Cohere via OpenRouter from `.env`
+(`LLM_MODEL`/`LLM_BASE_URL`/`LLM_API_KEY`). Both OpenAI-compatible;
+secrets live in `.env`/user env and never reach git — `.env*` is
+gitignored except `.env.example`.
 
-| Track | Feature in this repo |
-|---|---|
-| swarms | `tools/orchestrator_demo.py` — 3-worker bid auction, cheapest verified bid wins, per-task settlement to `*.architect.near` sub-accounts |
-| security | `tools/loop_guard.py` + `policies/command_policy.json` — role allowlist (architect/research-agent/coder/runner/auditor), hard deny (`transfer_tokens`, `sign_tx`, `exfiltrate_env`), every action logged pre-execution |
-| agents | `tools/research_agent_demo.py` + `tools/test_agent.py` — research worker with `[Source: url]` citations and unverified-claim flagging; wallet-free `NearIntentPayer` stub keeps the NEAR Intent receipt contract |
+## Демо-контур (swarm + intents)
 
+- `tools/hackathon_grand_demo.py` — **единый прогон**: задача → аукцион →
+  работа победителя → NEAR Intent → расчёт → ответ. Печатает торг вживую.
+- `tools/orchestrator_demo.py` — аукцион одной задачи: менеджер объявляет
+  задачу с бюджетом; `research-agent` (research-bot.testnet, на 12% дешевле
+  аналитика) и `analyst` (стаб) торгуются, bid `freelancer` с битой
+  ed25519-подписью отклоняется контрактом; cheapest-verified bid побеждает;
+  расчёт — `verify_and_release` на `nexus-escrow.yksunder.testnet`.
+- `tools/near_intent_payer.py` — расчёт через эскроу-контракт: чек несёт
+  JSON-намерение `{"action": "pay_for_service", "service": "Tavily_Search",
+  "amount": ..., "currency": "NEAR", "intent_id": ..., "deadline_ms": ...}`
+  и реальные TxHash шагов `create_task`/`submit_bid`/`verify_and_release`.
+- `tools/research_agent_demo.py` — пайплайн verified-answer → payment;
+  `run_research_loop()` — мост живого агента в cite_check → NearIntentPayer.
+- `tools/loop_guard.py` + `policies/command_policy.json` — policy gate,
+  audit log решений (`decompose → hire → verify → create_intent`).
+
+## NEAR Testnet Integration
+
+`tools/near_rpc.py` — JSON-RPC клиент к **реальному** NEAR Testnet
+(`https://test.rpc.fastnear.com`, переопределяется `NEAR_RPC_URL`), чистый
+stdlib. Fallback/direct-transfer удалён: `NearIntentPayer.pay()` имеет два
+режима, и в contract-режиме деньги двигает только контракт.
+
+| режим | условие | что происходит |
+|---|---|---|
+| `stub` | нет `NEAR_ACCOUNT_ID`/`NEAR_ESCROW_CONTRACT` | локальный чек, без сети (тесты, офлайн) |
+| `contract` | `NEAR_ACCOUNT_ID` + `NEAR_ESCROW_CONTRACT` | полный жизненный цикл `nexus-escrow.yksunder.testnet`: `create_task` → `submit_bid` → `accept_bid` → `submit_work` → `verify_and_release`; в чеке реальные `tx_hash` каждого шага + explorer |
+
+Контракт v2: репутация агента (`tasks_completed`/`tasks_failed`/`active`),
+проверка дедлайна (`ERR_TASK_EXPIRED`), счётчики `get_escrow_balance` /
+`get_burned`. Ставки проверяются на цепочке: `submit_bid` несёт подпись
+`ed25519_verify` от аккаунта агента; битый ключ отклоняется сетью
+(`WebAssembly trap`), а не клиентом.
+
+Ключи — только из `.env`/env (см. `.env.example`), в коде не хранятся и в
+лог не печатаются. Подпись транзакции — **встроенная в `tools/near_rpc.py`**
+(pure-Python ed25519 по RFC 8032 + Borsh-сериализация +
+`broadcast_tx_commit`): `pip install` не нужен. near-api-py/py-near
+сознательно не используются — их цепочки зависимостей (`ed25519`,
+`versioneer`, `borsh-construct`) не собираются на Python 3.15. Ошибка
+контракта → `ContractCallError` с сырым текстом, чек `status: "error"`;
+«settled» понарошку не рисуется.
+
+Цепочка для видео: verified answer → `verify_and_release` → реальные
+`TxHash` в выводе `hackathon_grand_demo.py` + чек в JSON с
+`explorer`-ссылкой на `testnet.nearblocks.io`.
+
+## Тесты
+
+```powershell
+python tests/test_research_agent.py   # 37 тестов на моках, без сети
+python tools/test_agent.py            # 13 тестов: оплата + LoopGuard + оркестратор (офлайн)
+```
