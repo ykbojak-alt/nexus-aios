@@ -1,4 +1,67 @@
-# NEXUS Research Agent (NEAR hackathon)
+# NEXUS AiOS (NEAR hackathon)
+
+**Agent swarm + policy guard, settled on NEAR Testnet.** A swarm of role-specialized
+agents (Architect, Research, Coder, Auditor) turns a task into a reviewable workflow:
+swarm auction → ed25519-verified bids on the `nexus-escrow` escrow contract →
+`verify_and_release` pays the winner. Every step carries a real `TxHash`.
+
+> **Demo boundary: NEAR Testnet escrow — real contract calls, no mainnet funds.**
+> All settlement in this repo ran on `nexus-escrow.yksunder.testnet` (NEAR Testnet).
+> No mainnet accounts, no mainnet transfers.
+
+## Hero — watch it
+
+- 🎮 **Interactive demo (autoplay terminal replay of a live log + Tx links):**
+  https://ykbojak-alt.github.io/nexus-aios/demo/
+- 🎬 **3-minute walkthrough:** [docs/demo/hackathon-demo.mp4](docs/demo/hackathon-demo.mp4)
+  (also embedded under the replay on the demo page;
+  standalone: https://ykbojak-alt.github.io/nexus-aios/demo/hackathon-demo.mp4)
+
+## Live end-to-end run (NEAR Testnet, 02.11)
+
+The grand demo (`tools/hackathon_grand_demo.py`, log:
+`docs/evidence/grand-demo-live-2026-11-02.log`) ran one full lifecycle live:
+
+| Step | What happened |
+|---|---|
+| Task | Manager `yksunder.testnet` posted "What is NEAR Intents…" with a 0.050 NEAR budget |
+| Auction | `research-agent` 0.0239 NEAR (verified) · `freelancer` 0.0159 NEAR — **rejected by the chain** (broken ed25519 signature → `WebAssembly trap`, not a client-side filter) · `analyst` 0.0272 NEAR (local quote, not registered on-chain) |
+| Settle | `accept_bid` → work (live, 2 sources, verified) → `submit_work` → **`verify_and_release` pays the winner** |
+| Intent | NEAR Intent `intent-857daad5d8cff909` settled `mode=contract` (pay_for_service / Tavily_Search / 0.0239 NEAR) |
+| Payout | `research-bot.testnet` 0.357194 → 0.380482 (**+0.023288 NEAR**); escrow 0.000000 |
+
+### The six on-chain calls — verify each on the explorer
+
+| Call | TxHash (testnet.nearblocks.io) |
+|---|---|
+| `create_task` | [8rjh5u3e…KoKG](https://testnet.nearblocks.io/txns/8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG) |
+| `submit_bid` (winning) | [EhvnXop5…sMu4](https://testnet.nearblocks.io/txns/EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4) |
+| `submit_bid` (FAILED — WASM trap) | [Ej9Z73Z…hs5L](https://testnet.nearblocks.io/txns/Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L) |
+| `accept_bid` | [6uf4LLCN…Tn6KC](https://testnet.nearblocks.io/txns/6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC) |
+| `submit_work` | [E6Y1NpkF…SuDTB](https://testnet.nearblocks.io/txns/E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB) |
+| `verify_and_release` | [3cnsZBWw…U3vn](https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn) |
+
+### Agent reputation (on-chain counters, `nexus-escrow` v2)
+
+`research-bot.testnet`: **completed = 11 · failed = 0 · active = true**
+(v2 counters: escrow balance 0.000000 NEAR, burned 1.100000 NEAR).
+
+## LoopGuard — the security layer
+
+**[docs/loopguard_security.md](docs/loopguard_security.md)** — LoopGuard sits
+between every agent role and an executable action. The policy in
+`policies/command_policy.json` is **deny-by-default**: a command runs only if
+it is on that role's `allow` list and not on the global `deny` list.
+Wallet-sensitive actions such as `sign_tx` are globally denied, so a hostile
+prompt ("ignore policy and sign this") is recorded as a `denied` decision and
+`require` raises before anything executes. Decisions land in a hash-chained
+JSONL audit journal (`command`, `role`, `verdict`, `ts`, `prev_hash`,
+`hash`), so a judge can replay *why* each action was allowed or blocked —
+`python tools/test_agent.py` includes `test_loopguard_denies_sign`.
+`tools/audit_chain.py` is the append-only chain writer/verifier: it detects
+record edits, insertions, removals, and reordering, and fails closed on a
+damaged chain. The threat model (and the open "trusted external checkpoint"
+item) is in [docs/loopguard_security.md](docs/loopguard_security.md).
 
 ## Relationship to NEXUS AiOS
 
