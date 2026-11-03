@@ -32,14 +32,14 @@ The grand demo (`tools/hackathon_grand_demo.py`, log:
 
 ### The six on-chain calls — verify each on the explorer
 
-| Call | TxHash (testnet.nearblocks.io) |
+| Call | TxHash (explorer.testnet.near.org) |
 |---|---|
-| `create_task` | [8rjh5u3e…KoKG](https://testnet.nearblocks.io/txns/8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG) |
-| `submit_bid` (winning) | [EhvnXop5…sMu4](https://testnet.nearblocks.io/txns/EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4) |
-| `submit_bid` (FAILED — WASM trap) | [Ej9Z73Z…hs5L](https://testnet.nearblocks.io/txns/Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L) |
-| `accept_bid` | [6uf4LLCN…Tn6KC](https://testnet.nearblocks.io/txns/6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC) |
-| `submit_work` | [E6Y1NpkF…SuDTB](https://testnet.nearblocks.io/txns/E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB) |
-| `verify_and_release` | [3cnsZBWw…U3vn](https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn) |
+| `create_task` | [8rjh5u3e…KoKG](https://explorer.testnet.near.org/transactions/8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG) |
+| `submit_bid` (winning) | [EhvnXop5…sMu4](https://explorer.testnet.near.org/transactions/EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4) |
+| `submit_bid` (FAILED — WASM trap) | [Ej9Z73Z…hs5L](https://explorer.testnet.near.org/transactions/Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L) |
+| `accept_bid` | [6uf4LLCN…Tn6KC](https://explorer.testnet.near.org/transactions/6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC) |
+| `submit_work` | [E6Y1NpkF…SuDTB](https://explorer.testnet.near.org/transactions/E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB) |
+| `verify_and_release` | [3cnsZBWw…U3vn](https://explorer.testnet.near.org/transactions/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn) |
 
 ### Agent reputation (on-chain counters, `nexus-escrow` v2)
 
@@ -179,7 +179,7 @@ stdlib. Fallback/direct-transfer удалён: `NearIntentPayer.pay()` имее�
 
 Цепочка для видео: verified answer → `verify_and_release` → реальные
 `TxHash` в выводе `hackathon_grand_demo.py` + чек в JSON с
-`explorer`-ссылкой на `testnet.nearblocks.io`.
+`explorer`-ссылкой на `explorer.testnet.near.org`.
 
 ## Тесты
 

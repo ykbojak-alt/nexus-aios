@@ -1,0 +1,69 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+══════════════════════════════════════════════════════════════════
+    [scenario]     DEMO (синтетические индикаторы, реальная цена)
+    [swarm]        Initializing 60 autonomous trading agents... connected to MarginPad.
+    [swarm]        feed=demo exec=marginpad guard=2%/5%/shadow×6
+    [llm] Swarm configured: 20xGemma, 20xXing4.0, 20xLfm
+    [llm] Swarm active model: cohere/north-mini-code:free
+    [data]         BTC 77393.60 RSI=28.0 MACD=+180.00 EMA9/21=+ [demo-индикаторы, цена MarginPad]
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for liquid/lfm-2.5-2.6b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for liquid/lfm-2.5-2.6b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for liquid/lfm-2.5-2.6b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for liquid/lfm-2.5-2.6b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for liquid/lfm-2.5-2.6b:free → cohere/north-mini-code:free
+    [swarm]        60 agents voted: 2 BUY, 0 SELL, 58 HOLD.
+    [news]         sentiment +0.35 (demo-override — новости не опрашивались)
+──────────────────────────────────────────────────────────────────
+    ГЕНЕРАТОР │ предлагаю BUY · score +0.10 · размер 0.20% · стоп 76500 · 2 за покупку, 0 за продажу, 58 воздержались
+    КРИТИК    │ уверенность роя слабая +0.10 — края нет
+    АРБИТР    │ HOLD — |score| 0.10 < 0.6 — шум, в кэше
+──────────────────────────────────────────────────────────────────
+    [execution]    ордер не создан — вердикт HOLD (|score| 0.10 < 0.6 — шум, в кэше)
+══════════════════════════════════════════════════════════════════
+  GRAND CYCLE COMPLETE — exit 0
+══════════════════════════════════════════════════════════════════

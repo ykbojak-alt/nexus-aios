@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <rect width="1920" height="1080" fill="#0b0b12"/>
+  <text x="60" y="62" font-family="Consolas, Menlo, monospace" font-size="28" fill="#e8e8f0">NEXUS · TRADING AI-2 · база знаний (knowledge_base.json) → промпт агентов → голосование</text>
+  <text x="60" y="98" font-family="Consolas, Menlo, monospace" font-size="21" fill="#8a8aa0">knowledge_base.json · knowledge.py · agent_swarm.py · market_data.py · llm_factory.py · demo_trading_grand.py</text>
+
+  <rect x="60" y="128" width="1800" height="104" rx="10" fill="#141420" stroke="#3a3a52"/>
+  <text x="84" y="166" font-family="Consolas, Menlo, monospace" font-size="23" fill="#7fd1ff">    [memory]       Loaded 5 base rules + 1 learned lessons into agent context</text>
+  <text x="84" y="206" font-family="Consolas, Menlo, monospace" font-size="20" fill="#6a6a85">    → печатается в каждом цикле демо (demo_trading_grand.py) · 5/5 правил + 1 урок в промпте каждого агента</text>
+
+  <text x="60" y="278" font-family="Consolas, Menlo, monospace" font-size="23" fill="#e8e8f0">БАЗОВЫЕ ПРАВИЛА (5 аксиом) — статичны, уроками не перетираются</text>
+  <text x="60" y="318" font-family="Consolas, Menlo, monospace" font-size="19" fill="#c9c9d8">1. Funding-арбитраж: всегда обе ноги сразу (дельта-нейтральность).</text>
+  <text x="60" y="350" font-family="Consolas, Menlo, monospace" font-size="19" fill="#c9c9d8">2. Не покупай (BUY), если RSI &gt; 75, а sentiment &lt; -0.3.</text>
+  <text x="60" y="382" font-family="Consolas, Menlo, monospace" font-size="19" fill="#c9c9d8">3. При отрицательном funding не открывай LONG на перпе.</text>
+  <text x="60" y="414" font-family="Consolas, Menlo, monospace" font-size="19" fill="#c9c9d8">4. Не входи в сделку, если ATR выросла более чем на 50% за последний час.</text>
+  <text x="60" y="446" font-family="Consolas, Menlo, monospace" font-size="19" fill="#c9c9d8">5. Margin позиции ≤ 2% от equity, если стратегия не High-Risk.</text>
+
+  <rect x="60" y="482" width="1800" height="286" rx="10" fill="#141420" stroke="#3a3a52"/>
+  <text x="84" y="522" font-family="Consolas, Menlo, monospace" font-size="22" fill="#7fd1ff">БОЕВОЙ ПРОГОН --agents 5 — все 5 агентов применили правило #4 при голосовании</text>
+  <text x="84" y="562" font-family="Consolas, Menlo, monospace" font-size="19" fill="#9fe6a0">[vote 01/5] momentum-01·Gemma    → HOLD · ATR surge &gt;50% signals panic; RSI oversold, waiting for trend</text>
+  <text x="84" y="596" font-family="Consolas, Menlo, monospace" font-size="19" fill="#9fe6a0">[vote 02/5] contrarian-01·Xing4.0 → HOLD · ATR growth &gt;50% indicates panic; avoid entry despite low RSI</text>
+  <text x="84" y="630" font-family="Consolas, Menlo, monospace" font-size="19" fill="#9fe6a0">[vote 03/5] rsi-01·Mercury       → HOLD · ATR growth 129% &gt; 50% (panic), RSI oversold without confirmed trend</text>
+  <text x="84" y="664" font-family="Consolas, Menlo, monospace" font-size="19" fill="#9fe6a0">[vote 04/5] ema-01·Mercury       → HOLD · ATR вырос более чем на 50% за час — признак паники; RSI перепродан</text>
+  <text x="84" y="698" font-family="Consolas, Menlo, monospace" font-size="19" fill="#9fe6a0">[vote 05/5] macd-01·Mercury      → HOLD · ATR рост 129% &gt;50% — паника; лонг на перепроданном RSI (28) запрещён</text>
+  <text x="84" y="740" font-family="Consolas, Menlo, monospace" font-size="19" fill="#6a6a85">→ агенты получили ATR, ATR-рост и sentiment в снимке: правила решаемы, а не декларативны</text>
+
+  <text x="60" y="816" font-family="Consolas, Menlo, monospace" font-size="22" fill="#7fd1ff">FALLBACK МОДЕЛЕЙ — цепочка откатов видна в логе</text>
+  <text x="60" y="852" font-family="Consolas, Menlo, monospace" font-size="19" fill="#ff9d9d">[llm] Rate-limit, fallback to free model: google/gemma-4-31b-it:free → cohere/north-mini-code:free</text>
+  <text x="60" y="884" font-family="Consolas, Menlo, monospace" font-size="19" fill="#ff9d9d">[llm] Fallback triggered for generator: google/gemma-4-31b-it:free → cohere/north-mini-code:free</text>
+  <text x="60" y="916" font-family="Consolas, Menlo, monospace" font-size="19" fill="#6a6a85">→ 402/429 → бесплатная модель; 404/пустой ответ → резерв роли из models.yaml; квота 20 RPM на аккаунт</text>
+
+  <rect x="60" y="944" width="1800" height="96" rx="10" fill="#141420" stroke="#3a3a52"/>
+  <text x="84" y="982" font-family="Consolas, Menlo, monospace" font-size="21" fill="#e8e8f0">Тесты: 82/82 OK (python -m unittest tools.trading_ai2.test_trading_ai2) — база знаний, fallback, RPM, ATR</text>
+  <text x="84" y="1018" font-family="Consolas, Menlo, monospace" font-size="21" fill="#e8e8f0">Логи: docs/evidence/kb-demo-agents5.log · kb-prompt-evidence.log</text>
+</svg>

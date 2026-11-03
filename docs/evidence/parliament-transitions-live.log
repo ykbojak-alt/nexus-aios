@@ -1,0 +1,49 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+══════════════════════════════════════════════════════════════════
+    [scenario]     LIVE (реальные данные)
+    [swarm]        Initializing 100 autonomous trading agents... connected to MarginPad. Актив берёт скринер, а не фиксированный BTC/USDT.
+    [personas]     [personas] 100 уникальных персон · 15 семей · пример: TrendFollower-Aggressive, TrendFollower-Conservative, TrendFollower-RSI, TrendFollower-MACD, TrendFollower-EMA, TrendFollower-Volume
+    [swarm]        feed=binance-public exec=marginpad guard=2%/5%/shadow×6
+    [llm] Swarm configured: 15xMinimax, 15xGpt, 14xMercury, 14xOpenai/gpt, 14xMeta, 14xAgnes, 14xMistral
+    [execution] --no-execute: тест голосования — ордера отключены
+    [llm] Swarm active model: free/deepseek-v4-pro-0813
+    [portfolio]    Rebalance: OPEN POL/USDT (new opportunity)
+    [portfolio]    Total margin in use: $500/$2000 (25%)
+    [screener]     Best asset for trade: POL/USDT (Volatility: 1.8%, Volume: Low)
+    [data]         POL/USDT 0.10 RSI=72.19 MACD=+0.00 EMA9/21=+ объём=50207.60 (SMA20 148808.87, ×0.34) режим=VOLATILE [1m:72RSI, 15m:73RSI] [binance 1m+15m]
+    [news]         ⚡ Cache reset: ATR spike +108% за час
+    [mode]         ⚡ CHAOS
+    [chaos]        Volatility detected. Switching to micro-execution.
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1
+    [memory]       Loaded 8 base rules + 1 learned lessons into agent context
+    [regime]       VOLATILE — паника: в промпт агентов добавлен запрет лонгов (только HOLD или шорт с малым плечом)
+    [news]         sentiment +0.65 (override — реальный фид подменён для демо)
+    [swarm] Active Agents: 12/100 | Kills: 0 | Respawns: 0
+    [swarm] 🏛️ Chaos Swarm (Round 1):
+       ChaosScalper (Minimax): HOLD 0.90 (VOLATILE regime bans longs; RSI 72.19 > 20, no entry signal;)
+       VolatilityBreakout (Gpt): HOLD 0.85 (VOLATILE regime bans longs; volume_ratio 0.337 shows fakeout)
+    [swarm] 🏆 Chaos Swarm Consensus: HOLD 0.88 (единогласно — дебаты не нужны)
+    [swarm] Pool: 100 total, 12 active. 0 replacements this cycle.
+    [swarm]        2 agents voted: 0 BUY, 0 SELL, 2 HOLD.
+    [risk]         🛡️ Switched to CONSERVATIVE (Win streak: 0, Loss streak: 0, Trend: VOLATILE). Threshold: 0.70, Size: 1.5%
+    [risk]         Profile: CONSERVATIVE | Win Streak: 0 | Loss Streak: 0
+──────────────────────────────────────────────────────────────────
+    ГЕНЕРАТОР │ предлагаю не торговать · score +0.00 · 0 за покупку, 0 за продажу, 2 воздержались
+    КРИТИК    │ возражений нет — все довольны
+    АРБИТР    │ HOLD — рой в шуме — в кэше
+    [darwin]       score = Σ(conf × weight): +0.000 · масса голосов 1.75 · средний вес 1.00
+──────────────────────────────────────────────────────────────────
+    [execution]    ордер не создан — вердикт HOLD (рой в шуме — в кэше)
+══════════════════════════════════════════════════════════════════
+  GRAND CYCLE COMPLETE — exit 0
+══════════════════════════════════════════════════════════════════

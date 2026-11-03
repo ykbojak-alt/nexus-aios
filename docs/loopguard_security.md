@@ -32,9 +32,13 @@ Global denied actions currently include `transfer_tokens`, `sign_tx`, `rm -rf`, 
 
 ## Audit log and AI-judge replay
 
-Each `check()` appends an event to `audit_log` with `command`, `role`, `verdict`, and a millisecond timestamp (`ts`). The orchestration demo includes these events in its JSON output. A judge can replay the decision by applying the same policy version to the recorded role/command pair and verify that denied actions were not reported as allowed.
+Each `check()` appends a decision to the persistent JSONL journal and to the process-local `audit_log` returned by the orchestration demo. A journal row contains `role`, `command`, `verdict`, millisecond timestamp `ts`, `prev_hash`, and `hash`. `tools/audit_chain.py` hashes the canonical decision fields with SHA-256, links each row to the prior hash, and verifies the complete chain before allowing another append. Logs should omit secret values and transaction signing material.
 
-For an auditable submission, preserve the policy version/hash beside the event stream, include a task/run identifier and a stable event sequence, and store the log as an append-only artifact. The current implementation keeps the log in process memory and does not hash, sign, or persist it; its replay value is useful for the demo but it is not tamper-evident evidence. Logs should omit secret values and transaction signing material.
+### Hash-chain threat model
+
+The verifier detects a changed record, malformed row, or insertion, removal, or reordering inside the chain: the row hash or a later `prev_hash` no longer matches. LoopGuard fails closed and refuses to append when verification fails. The chain is not signed or anchored externally. Someone who can rewrite the whole journal can recompute its hashes, and truncating a suffix leaves a valid shorter chain; neither action can be distinguished from an authentic history using the file alone. The documented next step is to periodically store the current head hash in an independent trusted checkpoint, for example an anchor-hash recorded in the NEAR escrow contract. That anchor should be added only with a separately reviewed contract/write policy.
+
+For stronger replay evidence, the journal still needs a policy version/hash beside the event stream, a task/run identifier, and a stable event sequence.
 
 ## NEAR FunctionCall key analogy
 
@@ -57,12 +61,13 @@ These are recommendations only; `policies/command_policy.json` has not been chan
 - Route every signing and transaction-submission path through a single guarded wallet adapter; do not expose signer objects to model tools.
 - Enforce receiver, method, deposit/value, allowance, and task-level spending caps at the wallet boundary, not only in prompt text or agent roles.
 - Keep agent credentials isolated; no FullAccess private key or recovery key in the model process or environment visible to tools.
-- Persist an append-only, redacted audit record with policy hash, task/run ID, action arguments or their safe hash, decision reason, and subsequent transaction receipt.
+- Extend the persisted audit record with policy hash, task/run ID, action arguments or their safe hash, decision reason, and subsequent transaction receipt.
 - Require human or independent verifier approval for any action outside a narrow, preauthorized FunctionCall capability.
 
 ## Repository evidence
 
-- `tools/loop_guard.py`: global deny + per-role allow check; `require()` raises on denial; audit event is in-memory.
+- `tools/loop_guard.py`: global deny + per-role allow check; `require()` raises on denial; records decisions in JSONL before exposing them in process memory.
+- `tools/audit_chain.py`: append-only hash-chain writer and verifier; rejects appends to a damaged chain.
 - `policies/command_policy.json`: role grants and global denials.
 - `tools/near_intent_payer.py`: explicitly a stub; no network, wallet, or keys.
 - `tools/orchestrator_demo.py`: emits `audit_log` with the demo result.

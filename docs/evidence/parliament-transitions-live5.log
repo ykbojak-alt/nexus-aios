@@ -1,0 +1,83 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+══════════════════════════════════════════════════════════════════
+    [scenario]     LIVE (реальные данные)
+    [swarm]        Initializing 100 autonomous trading agents... connected to MarginPad. Актив берёт скринер, а не фиксированный BTC/USDT.
+    [personas]     [personas] 100 уникальных персон · 15 семей · пример: TrendFollower-Aggressive, TrendFollower-Conservative, TrendFollower-RSI, TrendFollower-MACD, TrendFollower-EMA, TrendFollower-Volume
+    [swarm]        feed=binance-public exec=marginpad guard=2%/5%/shadow×6
+    [llm] Swarm configured: 15xMinimax, 15xGpt, 14xMercury, 14xOpenai/gpt, 14xMeta, 14xAgnes, 14xMistral
+    [execution] --no-execute: тест голосования — ордера отключены
+    [llm] Swarm active model: free/deepseek-v4-pro-0813
+    [portfolio]    Rebalance: OPEN POL/USDT (new opportunity)
+    [portfolio]    Total margin in use: $500/$2000 (25%)
+    [screener]     Best asset for trade: POL/USDT (Volatility: 1.8%, Volume: Low)
+    [data]         POL/USDT 0.10 RSI=72.19 MACD=+0.00 EMA9/21=+ объём=26967.40 (SMA20 81073.88, ×0.33) режим=VOLATILE [1m:72RSI, 15m:75RSI] [binance 1m+15m]
+    [news]         ⚡ Cache reset: ATR spike +51% за час
+    [mode]         NORMAL
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1
+    [memory]       Loaded 8 base rules + 1 learned lessons into agent context
+    [regime]       VOLATILE — паника: в промпт агентов добавлен запрет лонгов (только HOLD или шорт с малым плечом)
+    [news]         Global: -0.35 (NEUTRAL, live) — Взлом Binance на $6.3 млрд, но аналитики призывают покупать
+    [news]         POL: +0.60 (EUPHORIA, live) — Позитив: лицензии, расширение сети, обновление протокола
+    [swarm] Active Agents: 12/100 | Kills: 0 | Respawns: 0
+[llm] 404 openai/gpt-oss-120b (1/3) → fallback
+[llm] Fallback triggered for generator: openai/gpt-oss-120b → groq/openai/gpt-oss-120b
+[llm] 404 openai/gpt-oss-120b (2/3) → fallback
+[llm] Fallback triggered for generator: openai/gpt-oss-120b → groq/openai/gpt-oss-120b
+[llm] 429 groq/openai/gpt-oss-120b (1/3) → fallback
+[llm] Rate-limit, fallback to free model: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Blacklisted model openai/gpt-oss-120b for 15 min (3× 404 not_found)
+[llm] Fallback triggered for generator: openai/gpt-oss-120b → groq/openai/gpt-oss-120b
+[llm] Fallback triggered for generator: mercury-3 → groq/openai/gpt-oss-120b
+[llm] 429 groq/openai/gpt-oss-120b (2/3) → fallback
+[llm] Rate-limit, fallback to free model: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Blacklisted model groq/openai/gpt-oss-120b for 15 min (3× 429 rate_limit)
+[llm] Rate-limit, fallback to free model: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Blacklisted model groq/openai/gpt-oss-120b for 15 min (4× 429 rate_limit)
+[llm] Rate-limit, fallback to free model: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+    [swarm] 🏛️ Technical Swarm (Round 1):
+       TrendFollower (Minimax): HOLD 0.60 (VOLATILE regime bans longs; 15m trend ok but 1m fakeout (pri)
+       MeanReversion (Gpt): HOLD 0.72 (VOLATILE regime bans longs; 15m volume spike is real but RSI)
+       Scalper (Mercury): HOLD 0.70 (MACD flat (<10), VOLATILE regime, low volume (0.33x SMA20) —)
+       Breakout (Openai/gpt): HOLD 0.85 (VOLATILE regime bans longs; 1m volume collapse (0.33) signal)
+    [swarm] 🏆 Technical Swarm Consensus: HOLD 0.72 (единогласно — дебаты не нужны)
+    [swarm] 🏛️ Sentiment Swarm (Round 1):
+       Analyst (Minimax): HOLD 0.85 (VOLATILE regime bans longs; global sentiment -0.35 is storm-)
+       Contrarian (Gpt): HOLD 0.72 (VOLATILE regime bans longs; RSI 72 falling from 76 but volum)
+       Volatility (Mercury): HOLD 0.90 (ATR рост 50.63% — шторм, лонги запрещены; объём упал до 33% )
+       RsiWatcher (Openai/gpt): HOLD 0.72 (VOLATILE regime bans longs; RSI 72.19 fell from 76.13 (not f)
+    [swarm] 🏆 Sentiment Swarm Consensus: HOLD 0.80 (единогласно — дебаты не нужны)
+    [swarm] 🏛️ Risk Swarm (Round 1):
+       RiskManager (Minimax): HOLD 0.85 (ATR growth 50.63% (above 50% threshold) + regime VOLATILE: p)
+       StopHunter (Gpt): HOLD 0.72 (VOLATILE regime bans longs; RSI 72 falling from 76 with 3x v)
+       Hodler (Mercury): HOLD 0.90 (RSI 72 не в зоне паники, объём крайне низкий (0.33) — ложный)
+       MacdTrader (Openai/gpt): HOLD 0.72 (VOLATILE regime bans longs; 1m volume collapse (0.33 ratio) )
+    [swarm] 🏆 Risk Swarm Consensus: HOLD 0.80 (единогласно — дебаты не нужны)
+    [swarm] Pool: 100 total, 12 active. 0 replacements this cycle.
+    [swarm]        12 agents voted: 0 BUY, 0 SELL, 12 HOLD.
+    [risk]         🛡️ Switched to CONSERVATIVE (Win streak: 0, Loss streak: 0, Trend: VOLATILE). Threshold: 0.70, Size: 1.5%
+    [risk]         Profile: CONSERVATIVE | Win Streak: 0 | Loss Streak: 0
+──────────────────────────────────────────────────────────────────
+    ГЕНЕРАТОР │ предлагаю не торговать · score +0.00 · 0 за покупку, 0 за продажу, 12 воздержались
+    КРИТИК    │ возражений нет — все довольны
+    АРБИТР    │ ОТМЕНА — META-VERDICT: HOLD (Risk Swarm Veto — confidence 0.80 > 0.7)
+    [arbiter]      ⚖️ META-VERDICT: HOLD (Risk Swarm Veto — confidence 0.80 > 0.7)
+    [darwin]       score = Σ(conf × weight): +0.000 · масса голосов 2.31 · средний вес 1.00
+──────────────────────────────────────────────────────────────────
+    [execution]    ордер не создан — вердикт HOLD (META-VERDICT: HOLD (Risk Swarm Veto — confidence 0.80 > 0.7))
+══════════════════════════════════════════════════════════════════
+  GRAND CYCLE COMPLETE — exit 0
+══════════════════════════════════════════════════════════════════

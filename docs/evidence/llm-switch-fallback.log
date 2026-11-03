@@ -1,0 +1,24 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+══════════════════════════════════════════════════════════════════
+    [scenario]     DEMO (синтетические индикаторы, реальная цена)
+    [swarm]        Initializing 60 autonomous trading agents... connected to MarginPad.
+    [swarm]        feed=demo exec=marginpad guard=2%/5%/shadow×6
+    [llm] Swarm configured: 20xGemma, 20xXing4.0, 20xMercury
+    [llm] Swarm active model: cohere/north-mini-code:free
+    [llm] Fallback to DeepSeek (key for GPT missing) → резерв https://openrouter.ai/api/v1: cohere/north-mini-code:free
+    [data]         BTC 77308.70 RSI=28.0 MACD=+180.00 EMA9/21=+ [demo-индикаторы, цена MarginPad]
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for google/gemma-4-31b-it:free → cohere/north-mini-code:free

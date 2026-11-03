@@ -1,0 +1,62 @@
+[bold yellow]N   N EEEEE X   X U   U  SSSS [/] [bold #ff1493] SSSS W   W  AAA  RRRR  M   M[/]
+[bold yellow]NN  N E      X X  U   U S     [/] [bold #ff1493]S     W   W A   A R  R  MM MM[/]
+[bold yellow]N N N EEE     X   U   U  SSS  [/] [bold #ff1493] SSS  W W W AAAAA RRRR  M M M[/]
+[bold yellow]N  NN E      X X  U   U     S [/] [bold #ff1493]    S WW WW A   A R  R  M   M[/]
+[bold yellow]N   N EEEEE X   X  UUU  SSSS  [/] [bold #ff1493]SSSS  W   W A   A R   R M   M[/]
+
+[dim]repo: D:\near-hackathon-nexus · python: C:\Python315\python.exe[/]
+
+[bold #ff1493]  ГЛАВНОЕ МЕНЮ[/]
+  [bold #ff1493][1][/]  🧠 Agent Economy (Research + Escrow)
+  [bold #ff1493][2][/]  📈 Swarm Trading (Three Minds + LLM Sentiment)
+  [bold #ff1493][3][/]  🔍 View On-Chain Stats
+  [bold #ff1493][4][/]  ❌ Exit
+
+[dim]дополнительно:[/] [bold]L[/] loop-режим · [bold]r[/] live-цикл · [bold]p[/] позиции · [bold]b[/] баланс · [bold]x[/] стоп+закрыть всё · [bold]c[/] очистить
+
+💰 [cyan][balance][/] Balance: $9,970.96 | Equity: $9,970.96 | Free: $9,970.96 | margin_in_use: $0.00 | PnL: +$0.00
+
+[dim]── swarm-cycle: C:\Python315\python.exe -m tools.trading_ai2.demo_trading_grand ──[/]
+[1;94m ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗[0m
+[1;94m ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝[0m
+[1;95m ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗[0m
+[1;95m ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║[0m
+[95m ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║[0m
+[95m ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝[0m
+[1;36m      A I   O P E R A T I N G   S Y S T E M[0m
+[90m══════════════════════════════════════════════════════════════════[0m
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+[dim]python-probe: ccxt/pydantic/openai/requests ok[/]
+[90m══════════════════════════════════════════════════════════════════[0m
+[95m    [scenario]     DEMO (синтетические индикаторы, реальная цена)[0m
+[36m    [swarm]        Initializing 60 autonomous trading agents... connected to MarginPad.[0m
+[90m    [swarm]        feed=demo exec=marginpad guard=2%/5%/shadow×6[0m
+[36m    [data]         BTC 77436.10 RSI=28.0 MACD=+180.00 EMA9/21=+ [demo-индикаторы, цена MarginPad][0m
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 2]
+[learning] замечание: применено уроков: 1 из 1
+[36m    [swarm]        60 agents voted: 52 BUY, 0 SELL, 8 HOLD.[0m
+[95m    [news]         sentiment +0.35 (demo-override — новости не опрашивались)[0m
+[90m──────────────────────────────────────────────────────────────────[0m
+[36m    ГЕНЕРАТОР │ предлагаю BUY · score +0.86 · размер 1.72% · стоп 75887 · 52 за покупку, 0 за продажу, 8 воздержались[0m
+[33m    КРИТИК    │ возражений нет — все довольны[0m
+[1;92m    АРБИТР    │ принято: BUY · score +0.86 · размер 1.72%[0m
+[90m──────────────────────────────────────────────────────────────────[0m
+[36m    [account]      Balance: $9,970.96 | Equity: $9,970.96 | margin_in_use: $0.00[0m
+[33m    [execution]    вердикт APPROVED BUY → MarginPad order…[0m
+    [execution] Position opened on MarginPad: botmvuxzc2k1q4 (LONG) margin $171.5 lev=3x @ 77435.1
+[90m══════════════════════════════════════════════════════════════════[0m
+[1;92m  MARGINPAD POSITION OPENED — id botmvuxzc2k1q4[0m
+[90m    [execution]    авто-закрытие через 8s — ждём обновления PnL…[0m
+💰 [cyan][balance][/] Balance: $9,970.96 | Equity: $9,970.96 | Free: $9,799.46 | margin_in_use: $171.50 | PnL: +$0.00
+[90m    [execution] Position botmvuxzc2k1q4 mark after 0s hold: -0.05$[0m
+[33m    [execution] Position botmvuxzc2k1q4 CLOSED. Realized PnL: -$0.61. (auto-close)[0m
+[95m    [realized]     PnL: -$0.61 | Balance updated: equity $9,970.35[0m
+[learning] новый урок из убытка: УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] исход сделки записан в память AI-2: 6f2f166aaa0a4804b6f85d9cdf520a11
+💰 [cyan][balance][/] Balance: $9,970.35 | Equity: $9,970.35 | Free: $9,970.35 | margin_in_use: $0.00 | PnL: +$0.00
+[36m    [account]      Balance: $9,970.35 | Equity: $9,970.35 | margin_in_use: $0.00[0m
+[90m══════════════════════════════════════════════════════════════════[0m
+[1;92m  GRAND CYCLE COMPLETE — exit 0[0m
+[90m══════════════════════════════════════════════════════════════════[0m
+[green]── swarm-cycle завершён: exit 0 ──[/]

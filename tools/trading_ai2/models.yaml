@@ -1,0 +1,36 @@
+# Конфигурация моделей торгового роя.
+#
+# generator — модели самого роя (60 агентов делятся по weight).
+# critic/arbiter — модели запасных ролей (критик/арбитр сейчас
+# считаются правилами, модели нужны для LLM-расширений и меню TUI).
+#
+# Ключи читает llm_factory.py: сначала SWARM_GEN_MODELS /
+# SWARM_CRITIC_MODEL / SWARM_ARBITER_MODEL из .env (переопределяют
+# этот файл), затем сам файл.
+#
+# Модели с суффиксом :free — бесплатные. Для них llm_factory держит
+# счётчик 20 запросов в минуту: при исчерпании квоты запрос уходит
+# на fallback, а не жжёт лимит и не падает.
+
+roles:
+  generator:
+    models:
+      - model: "free/minimax-m3.1-flash"
+        weight: 10
+      - model: "free/gpt-6-luna"
+        weight: 8
+      - model: "mercury-3"
+        weight: 10
+      - model: "groq/openai/gpt-oss-120b"
+        weight: 15
+      - model: "snova/Meta-Llama-3.3-70B-Instruct"
+        weight: 15
+      - model: "agnes/agnes-3.0-flash"
+        weight: 15
+      - model: "mistral-small-latest"
+        weight: 15
+    fallback: "groq/openai/gpt-oss-120b"
+  critic:
+    model: "free/glm-5.3-flash"
+  arbiter:
+    model: "free/deepseek-v4-pro-0813"

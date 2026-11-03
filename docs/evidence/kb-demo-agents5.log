@@ -1,0 +1,41 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+══════════════════════════════════════════════════════════════════
+    [scenario]     DEMO (синтетические индикаторы, реальная цена)
+    [swarm]        Initializing 5 autonomous trading agents... connected to MarginPad.
+    [swarm]        feed=demo exec=marginpad guard=2%/5%/shadow×6
+    [llm] Swarm configured: 1xGemma, 1xXing4.0, 3xMercury
+    [execution] --no-execute: тест голосования — ордера отключены
+    [llm] Swarm active model: cohere/north-mini-code:free
+    [data]         BTC 77056.10 RSI=28.0 MACD=+180.00 EMA9/21=+ [demo-индикаторы, цена MarginPad]
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1
+    [memory]       Loaded 5 base rules + 1 learned lessons into agent context
+    [news]         sentiment +0.35 (demo-override — новости не опрашивались)
+[llm] Rate-limit, fallback to free model: google/gemma-4-31b-it:free → cohere/north-mini-code:free
+[llm] Fallback triggered for generator: google/gemma-4-31b-it:free → cohere/north-mini-code:free
+    [vote 01/5] momentum-01·Gemma → HOLD conf 0.30 · ATR surge >50% signals panic; RSI oversold, waiting for trend co
+[llm] Rate-limit, fallback to free model: xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+[llm] Fallback triggered for generator: xingchen-agi/xing4.0-29b-a4b:free → cohere/north-mini-code:free
+    [vote 02/5] contrarian-01·Xing4.0 → HOLD conf 0.30 · ATR growth >50% indicates panic; avoid entry despite low RSI. Wa
+    [vote 03/5] rsi-01·Mercury → HOLD conf 0.30 · ATR growth 129% > 50% (panic), RSI oversold without confirmed tr
+    [vote 04/5] ema-01·Mercury → HOLD conf 0.30 · ATR вырос более чем на 50% за час — признак паники; RSI перепрод
+    [vote 05/5] macd-01·Mercury → HOLD conf 0.30 · ATR рост 129% >50% — паника; лонг на перепроданном RSI (28) запр
+    [swarm]        5 agents voted: 0 BUY, 0 SELL, 5 HOLD.
+──────────────────────────────────────────────────────────────────
+    ГЕНЕРАТОР │ предлагаю не торговать · score +0.00 · 0 за покупку, 0 за продажу, 5 воздержались
+    КРИТИК    │ возражений нет — все довольны
+    АРБИТР    │ HOLD — рой в шуме — в кэше
+──────────────────────────────────────────────────────────────────
+    [execution]    ордер не создан — вердикт HOLD (рой в шуме — в кэше)
+══════════════════════════════════════════════════════════════════
+  GRAND CYCLE COMPLETE — exit 0
+══════════════════════════════════════════════════════════════════

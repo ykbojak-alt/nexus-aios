@@ -1,0 +1,49 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+══════════════════════════════════════════════════════════════════
+    [scenario]     DEMO (синтетические индикаторы, реальная цена)
+    [swarm]        Initializing 13 autonomous trading agents... connected to MarginPad.
+    [swarm]        feed=demo exec=marginpad guard=2%/5%/shadow×6
+    [llm] Swarm configured: 6xCohere, 7xMercury
+    [execution] --no-execute: тест голосования — ордера отключены
+    [llm] Swarm active model: cohere/north-mini-code:free
+    [data]         BTC 77532.10 RSI=28.0 MACD=+180.00 EMA9/21=+ объём=10.24 (SMA20 12.78, ×0.80) режим=TRENDING_UP [1m:28RSI, 15m:52RSI] [1m демо-индикаторы, 15m и объём — реальные свечи]
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1
+    [memory]       Loaded 5 base rules + 1 learned lessons into agent context
+    [news]         sentiment +0.35 (demo-override — новости не опрашивались)
+    [vote 01/13] TrendFollower-01 (15m)·Cohere → HOLD conf 0.30 w 1.00 · [error] llm_api_error: empty response
+    [vote 02/13] Contrarian-01 (1m)·Cohere → HOLD conf 0.30 w 1.00 · RSI 28 (oversold) but contrarian lesson warns against premature longs; volume falling on price rise hints fakeout; need trend confirmation before entry.
+    [vote 03/13] RiskManager-01 (1m)·Cohere → HOLD conf 0.30 w 1.00 · [error] llm_api_error: empty response
+    [vote 04/13] Scalper-01 (1m)·Cohere → HOLD conf 0.30 w 1.00 · RSI упал до 28 (перепроданность) с падающим импульсом, MACD позитивен, но 15m показывает понижательный тренд и негативный MACD, объём ниже среднего – высокий риск фейкового пробоя. Подождём более чётк
+    [vote 05/13] Analyst-01 (1m)·Cohere → HOLD conf 0.30 w 1.00 · [error] llm_api_error: empty response
+    [vote 06/13] Breakout-01 (15m)·Cohere → HOLD conf 0.30 w 1.00 · [error] llm_api_error: empty response
+[parser] Recovered truncated JSON for mercury-3
+    [vote 07/13] MeanReversion-01 (15m)·Mercury → HOLD conf 0.35 w 1.00 · recovered: без причины
+    [vote 08/13] MacdTrader-01 (1m)·Mercury → HOLD conf 0.30 w 1.00 · MACD сигнал BUY, но RSI 28 перепродан — урок запрещает лонг. Объём низкий (0.80), тренд не подтверждён. HOLD.
+[llm] Fallback triggered for generator: mercury-3 → cohere/north-mini-code:free
+    [vote 09/13] Momentum-01 (1m)·Mercury → HOLD conf 0.30 w 1.00 · [error] llm_api_error: empty response
+    [vote 10/13] RsiWatcher-01 (1m)·Mercury → HOLD conf 0.30 w 1.00 · RSI упал ниже 35, но действует урок: вход на перепроданности убыточен. Объём ниже среднего (0.80), подтверждения нет; 15m тренд вниз расходится с 1m. Жду разворот или подтверждение объёмом.
+[llm] Fallback triggered for generator: mercury-3 → cohere/north-mini-code:free
+    [vote 11/13] Volatility-01 (1m)·Mercury → HOLD conf 0.30 w 1.00 · [error] llm_api_error: empty response
+    [vote 12/13] StopHunter-01 (1m)·Mercury → BUY  conf 0.90 w 1.00 · RSI=28 ниже 25? нет, но 28 указывает на перепроданность; урок: не входи в лонг при RSI<25. Здесь 28, но видим сигнал покупки только при RSI<25. Урок противоречит сигналу, снижаю confidence. Режим TREN
+    [vote 13/13] Hodler-01 (1m)·Mercury → HOLD conf 0.30 w 1.00 · RSI 28 не экстремальная паника (<20), объём ниже среднего, лонг в перепроданной зоне запрещён уроком. Жду разворота по тренду.
+    [swarm]        13 agents voted: 1 BUY, 0 SELL, 12 HOLD.
+──────────────────────────────────────────────────────────────────
+    ГЕНЕРАТОР │ предлагаю BUY · score +0.20 · размер 0.40% · стоп 77400 · 1 за покупку, 0 за продажу, 12 воздержались
+    КРИТИК    │ уверенность роя слабая +0.20 — края нет
+    АРБИТР    │ HOLD — |score| 0.20 < 0.6 — шум, в кэше
+    [darwin]       score = Σ(conf × weight): +0.198 · масса голосов 4.55 · средний вес 1.00
+──────────────────────────────────────────────────────────────────
+    [execution]    ордер не создан — вердикт HOLD (|score| 0.20 < 0.6 — шум, в кэше)
+══════════════════════════════════════════════════════════════════
+  GRAND CYCLE COMPLETE — exit 0
+══════════════════════════════════════════════════════════════════

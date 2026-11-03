@@ -1,0 +1,351 @@
+NEXUS SWARM — портфель, активные позиции и сделки: доказательство
+дата: 2026-10-30 | движок: http://127.0.0.1:8891 (python -m tools.trading_ai2.swarm_server)
+репозиторий роя: D:/near-hackathon-nexus | панель: NEXUS /swarm
+
+======================================================================
+1. Движок работает на текущем коде: пул персон, а не legacy-рой
+======================================================================
+$ curl http://127.0.0.1:8891/api/info
+{
+  "ok": true,
+  "engine": "nexus-swarm",
+  "repo": "D:\\near-hackathon-nexus",
+  "python": "3.15.2",
+  "poolSize": 100,
+  "active": 30,
+  "liveCycle": false
+}
+
+Для сравнения :8890 — старый процесс (его не перезапускали, владелец решает сам):
+$ curl http://127.0.0.1:8890/api/info
+{"ok": true, "engine": "nexus-swarm", "repo": "D:\\near-hackathon-nexus", "python": "3.15.2", "agents": 13}
+$ curl -w %{http_code} http://127.0.0.1:8890/api/positions  ->  404
+
+======================================================================
+2. Активный трейд виден в /api/positions (реальная позиция MarginPad)
+======================================================================
+Позиция открына настоящим вызовом funding_executor.open_position('SOL/USDT', ...)
+в симулятор MarginPad (реальные цены биржи, не живые деньги), затем:
+open_position -> id botmvvd8khvik, вход 94.41
+$ curl "http://127.0.0.1:8891/api/positions?fresh=1"
+{
+  "ok": true,
+  "errors": [],
+  "live": true,
+  "source": "marginpad",
+  "error": null,
+  "balance": {
+    "balanceUsd": 9964.73,
+    "equityUsd": 9964.73,
+    "marginInUseUsd": 100,
+    "freeMarginUsd": 9864.73,
+    "unrealizedPnlUsd": 0,
+    "startingBalanceUsd": 10000
+  },
+  "positions": [
+    {
+      "id": "botmvvd8khvik",
+      "symbol": "SOL/USDT",
+      "side": "long",
+      "status": "open",
+      "marginUsd": 100,
+      "leverage": 3,
+      "entryPrice": 94.41,
+      "markPrice": 94.41,
+      "unrealizedPnlUsd": 0,
+      "realizedPnlUsd": null,
+      "qty": 3.1776294884016525,
+      "ageS": 0.0
+    }
+  ],
+  "closedCount": 62,
+  "realizedPnlUsd": -35.27,
+  "symbols": [
+    "SOL/USDT"
+  ],
+  "note": "счёт MarginPad: симулятор на реальных ценах, не настоящие деньги",
+  "trades": {
+    "rows": [
+      {
+        "ts": "2026-10-30T18:39:24+00:00",
+        "event": "position_closed",
+        "symbol": "SOL/USDT",
+        "side": "long",
+        "id": "botmvvbfnr64ck",
+        "marginUsd": 100,
+        "entryPrice": 93.91,
+        "price": null,
+        "pnlUsd": null,
+        "holdS": null,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T18:48:34+00:00",
+        "event": "position_closed",
+        "symbol": "TRX/USDT",
+        "side": "long",
+        "id": "botmvvbs4686wx",
+        "marginUsd": 100,
+        "entryPrice": 0.332,
+        "price": null,
+        "pnlUsd": -0.42,
+        "holdS": 21.8,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T18:48:36+00:00",
+        "event": "position_closed",
+        "symbol": "TRX/USDT",
+        "side": "long",
+        "id": "botmvvbs4686wx",
+        "marginUsd": 100,
+        "entryPrice": 0.332,
+        "price": null,
+        "pnlUsd": -0.42,
+        "holdS": 21.8,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T18:54:09+00:00",
+        "event": "position_closed",
+        "symbol": "SOL/USDT",
+        "side": "long",
+        "id": "botmvvbxk425q2",
+        "marginUsd": 100,
+        "entryPrice": 93.6,
+        "price": null,
+        "pnlUsd": 0.53,
+        "holdS": 103.2,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T18:56:49+00:00",
+        "event": "position_closed",
+        "symbol": "SOL/USDT",
+        "side": "long",
+        "id": "botmvvc15w8759",
+        "marginUsd": 100,
+        "entryPrice": 94.19,
+        "price": null,
+        "pnlUsd": 0.24,
+        "holdS": 90.7,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T19:00:56+00:00",
+        "event": "position_closed",
+        "symbol": "SOL/USDT",
+        "side": "long",
+        "id": "botmvvc5whh3sw",
+        "marginUsd": 100,
+        "entryPrice": 94.29,
+        "price": null,
+        "pnlUsd": -0.78,
+        "holdS": 120.9,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T19:08:57+00:00",
+        "event": "position_closed",
+        "symbol": "SOL/USDT",
+        "side": "long",
+        "id": "botmvvcgay24xm",
+        "marginUsd": 100,
+        "entryPrice": 94.26,
+        "price": null,
+        "pnlUsd": 0.05,
+        "holdS": 116.2,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T19:24:07+00:00",
+        "event": "position_closed",
+        "symbol": "BTC/USDT",
+        "side": "long",
+        "id": "botmvvcvp2b1og",
+        "marginUsd": 300,
+        "entryPrice": 76395.4,
+        "price": null,
+        "pnlUsd": 0.52,
+        "holdS": 308.9,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T19:26:13+00:00",
+        "event": "position_closed",
+        "symbol": "BTC/USDT",
+        "side": "long",
+        "id": "botmvvcvnp93il",
+        "marginUsd": 300,
+        "entryPrice": 76395.4,
+        "price": null,
+        "pnlUsd": 1.6,
+        "holdS": 425.0,
+        "reason": "take-profit +$1.20",
+        "mode": "live"
+      },
+      {
+        "ts": "2026-10-30T19:26:57+00:00",
+        "event": "position_closed",
+        "symbol": "SOL/USDT",
+        "side": "long",
+        "id": "botmvvd5uo53jo",
+        "marginUsd": 100,
+        "entryPrice": 94.45,
+        "price": null,
+        "pnlUsd": -0.33,
+        "holdS": 2.1,
+        "reason": "portfolio rebalance",
+        "mode": "live"
+      }
+    ],
+    "closedCount": 11,
+    "realizedPnlUsd": 0.99,
+    "note": ""
+  }
+}
+
+Ключ API в ответе не появляется (проверка ниже), символы нормализованы к
+формату БАЗА/USDT, возраст позиции считается от opened_ts и не уходит в
+минус, даже если часы MarginPad спешат (возраст >= 0с).
+посев закрыт: id botmvvd8khvik выход None PnL None — это плата за доказательство, paper-комиссии симулятора.
+
+======================================================================
+3. Реальные события сделок в logs/trading_history.jsonl
+======================================================================
+строк в истории всего: 126, событий позиций: 11
+{"ts": "2026-10-30T18:39:24+00:00", "event": "position_closed", "id": "botmvvbfnr64ck", "symbol": "SOL", "side": "long", "margin_usd": 100, "entry_price": 93.91, "reason": "portfolio rebalance", "pnl_usd": null, "mode": "live"}
+{"ts": "2026-10-30T18:39:24+00:00", "event": "position_closed", "id": "botmvvbfnr64ck", "symbol": "SOL", "side": "long", "margin_usd": 100, "entry_price": 93.91, "reason": "portfolio rebalance", "pnl_usd": null, "mode": "live"}
+{"ts": "2026-10-30T18:48:34+00:00", "event": "position_closed", "id": "botmvvbs4686wx", "symbol": "TRX", "side": "long", "margin_usd": 100, "entry_price": 0.332, "reason": "portfolio rebalance", "mode": "live", "exit_price": 0.3319, "hold_s": 21.8, "pnl_usd": -0.42}
+{"ts": "2026-10-30T18:48:36+00:00", "event": "position_closed", "id": "botmvvbs4686wx", "symbol": "TRX", "side": "long", "margin_usd": 100, "entry_price": 0.332, "reason": "portfolio rebalance", "mode": "live", "exit_price": 0.3319, "hold_s": 21.8, "pnl_usd": -0.42}
+{"ts": "2026-10-30T18:54:09+00:00", "event": "position_closed", "id": "botmvvbxk425q2", "symbol": "SOL", "side": "long", "margin_usd": 100, "entry_price": 93.6, "reason": "portfolio rebalance", "mode": "live", "exit_price": 93.87, "hold_s": 103.2, "pnl_usd": 0.53}
+{"ts": "2026-10-30T18:56:49+00:00", "event": "position_closed", "id": "botmvvc15w8759", "symbol": "SOL", "side": "long", "margin_usd": 100, "entry_price": 94.19, "reason": "portfolio rebalance", "mode": "live", "exit_price": 94.37, "hold_s": 90.7, "pnl_usd": 0.24}
+{"ts": "2026-10-30T19:00:56+00:00", "event": "position_closed", "id": "botmvvc5whh3sw", "symbol": "SOL", "side": "long", "margin_usd": 100, "entry_price": 94.29, "reason": "portfolio rebalance", "mode": "live", "exit_price": 94.15, "hold_s": 120.9, "pnl_usd": -0.78}
+{"ts": "2026-10-30T19:08:57+00:00", "event": "position_closed", "id": "botmvvcgay24xm", "symbol": "SOL", "side": "long", "margin_usd": 100, "entry_price": 94.26, "reason": "portfolio rebalance", "mode": "live", "exit_price": 94.38, "hold_s": 116.2, "pnl_usd": 0.05}
+{"ts": "2026-10-30T19:24:07+00:00", "event": "position_closed", "id": "botmvvcvp2b1og", "symbol": "BTC", "side": "long", "margin_usd": 300, "entry_price": 76395.4, "reason": "portfolio rebalance", "mode": "live", "exit_price": 76524, "hold_s": 308.9, "pnl_usd": 0.52, "risk_profile": "BALANCED"}
+{"ts": "2026-10-30T19:26:13+00:00", "event": "position_closed", "id": "botmvvcvnp93il", "symbol": "BTC", "side": "long", "margin_usd": 300, "entry_price": 76395.4, "exit_price": 76615.6, "reason": "take-profit +$1.20", "hold_s": 425.0, "pnl_usd": 1.6, "mode": "live", "risk_profile": "CONSERVATIVE"}
+{"ts": "2026-10-30T19:26:57+00:00", "event": "position_closed", "id": "botmvvd5uo53jo", "symbol": "SOL", "side": "long", "margin_usd": 100, "entry_price": 94.45, "reason": "portfolio rebalance", "mode": "live", "exit_price": 94.45, "hold_s": 2.1, "pnl_usd": -0.33, "risk_profile": "CONSERVATIVE"}
+
+Строки выше — записи реальных закрытий (id, символ, маржа, вход, выход,
+время удержания, реализованный PnL с комиссиями). Дубли у id botmvvbs4686wx
+и botmvvbfnr64ck — след того, что позицию закрыли два процесса одновременно:
+мой цикл и автономный ночной раннер (--live --loop), который в это время
+крутится в системе. Это не двойная запись одним кодом: _persist вызывается
+один раз на одно закрытие.
+pnl_usd: null у самых ранних закрытий — строки, записанные до фикса
+(итог брали только из ответа /close). После фикса запись позиции
+перечитывается, и в истории лежат exit_price/hold_s/pnl_usd; там, где
+MarginPad итог не отдал, панель честно показывает «—», а не «$0.00».
+
+======================================================================
+4. Как эти закрытия появились: решение «Слой 0», а не ручная команда
+======================================================================
+    [swarm]        Initializing 100 autonomous trading agents on BTC/USDT... connected to MarginPad.
+    [swarm]        feed=binance-public exec=marginpad guard=2%/5%/shadow×6
+    [portfolio]    Rebalance: CLOSE SOL/USDT (fell out of top), OPEN SOPH/USDT (new opportunity), OPEN WLD/USDT (new opportunity), OPEN PARTI/USDT (new opportunity)
+    [portfolio]    Total margin in use: $1500/$2000 (75%)
+    [execution]    портфель: закрыта botmvvbfnr64ck (SOL)
+    [screener]     Best asset for trade: SOPH/USDT (Volatility: 9.3%, Volume: Low)
+    [swarm] Active Agents: 30/100 | Kills: 0 | Respawns: 0
+    [swarm] Pool: 100 total, 30 active. 0 replacements this cycle.
+    [swarm]        30 agents voted: 0 BUY, 0 SELL, 30 HOLD.
+    ГЕНЕРАТОР │ предлагаю не торговать · score +0.00 · 0 за покупку, 0 за продажу, 30 воздержались
+    АРБИТР    │ HOLD — рой в шуме — в кэше
+    [execution]    ордер не создан — вердикт HOLD (рой в шуме — в кэше)
+
+Баннер старта (правка этой фазы: актив больше не приписан BTC/USDT):
+  demo_trading_grand.py:970: _log(say, "[swarm]", f"Initializing {len(swarm)} autonomous " f"trading agents... connected to MarginPad. Актив берёт скринер, " f"а не фиксированный {a.symbol}.", cyan)
+
+Кто пишет итог сделки в историю — closed_trade_fields (перечитывание
+записи позиции MarginPad, потому что /close сам PnL не отдаёт):
+  def closed_trade_fields(pos: dict, res: dict, rec: dict) -> dict:
+      """Итог закрытия для истории: реализованный PnL, выход, удержание.
+  
+      MarginPad кладёт pnl_usd/exit_price/closed_ts в запись позиции, а не в
+      ответ /close, поэтому запись перечитывают (rec) и берут из неё числа.
+      Честный null лучше выдуманного нуля: панель покажет «—», а не «$0.00»
+      там, где MarginPad итог ещё не отдал.
+      """
+      pnl = rec.get("pnl_usd")
+      if pnl is None:
+          pnl = res.get("realized_pnl_usd")
+      opened = pos.get("opened_ts")
+      closed_ts = rec.get("closed_ts")
+      hold_s = (max(0.0, round((float(closed_ts) - float(opened)) / 1000.0, 1))
+                if opened and closed_ts else _age_s(pos))
+      return {"exit_price": rec.get("exit_price"),
+              "hold_s": hold_s,
+              "pnl_usd": float(pnl) if pnl is not None else None}
+
+======================================================================
+5. Гейты не ослаблены: рой честно отказался открывать сделку
+======================================================================
+cycle_live.log: АРБИТР    │ ОТМЕНА — вето тяжёлого большинства: 21/30 top-30 по весу говорят HOLD (70% ≥ 70%)
+cycle_live.log: [execution]    ордер не создан — вердикт HOLD (вето тяжёлого большинства: 21/30 top-30 по весу говорят HOLD (70% ≥ 70%))
+cycle_hold.log: АРБИТР    │ ОТМЕНА — вето тяжёлого большинства: 10/12 top-12 по весу говорят HOLD (83% ≥ 70%)
+cycle_hold.log: [execution]    ордер не создан — вердикт HOLD (вето тяжёлого большинства: 10/12 top-12 по весу говорят HOLD (83% ≥ 70%))
+cycle_open.log: [execution]    ордер не создан — вердикт HOLD (рой в шуме — в кэше)
+cycle_live2.log: [execution]    ордер не создан — вердикт HOLD (рой в шуме — в кэше)
+
+======================================================================
+6. Тесты
+======================================================================
+$ C:/Python315/python.exe -m unittest tools.trading_ai2.test_trading_ai2
+  Ran 228 tests in 48.780s
+  OK
+$ npx vitest run --config apps/nexus/vitest.config.ts src/product/programs
+  Test Files  11 passed (11)
+  Tests  112 passed (112)
+$ npx tsc --noEmit -p apps/nexus/tsconfig.json
+  без ошибок
+
+Число тестов выросло с 212 до 228 во время этой фазы: репозиторий роя
+параллельно трогал не мой процесс (mtime funding_executor.py 22:13 и
+test_trading_ai2.py 22:19 — в этой фазе я их не редактировал). Первый
+прогон после этих правок дал 1 падение (тест читался на полуслове),
+чистый прогон выше — 228/228 OK.
+
+======================================================================
+7. Секреты
+======================================================================
+MARGINPAD_API_KEY читается из .env, в ответах движка и в этом логе его нет.
+ключ присутствует: True | длина: 36 | утёк в лог: False
+API Key NEAR_PRIVATE_KEY в этом логе не появляется.
+
+======================================================================
+8. Состояние счёта после проверки
+======================================================================
+{
+  "live": true,
+  "balance": {
+    "balanceUsd": 9964.34,
+    "equityUsd": 9964.34,
+    "marginInUseUsd": 0,
+    "freeMarginUsd": 9964.34,
+    "unrealizedPnlUsd": 0,
+    "startingBalanceUsd": 10000
+  },
+  "openPositions": [],
+  "closedCount": 63,
+  "realizedPnlUsd": -35.66
+}
+
+======================================================================
+9. Скриншот панели (portfolio-panel.png): как он снят
+======================================================================
+Панель NEXUS /swarm собрана в статический экспорт (npm run build,
+output: 'export') и отдана локальным read-only сервером на 127.0.0.1:3999.
+Единственное изменение в отдаваемых файлах — порт движка в теле JS/HTML:
+127.0.0.1:8890 -> 127.0.0.1:8891, чтобы страница говорила с движком на
+текущем коде, а не со старым процессом на 8890. Файлы репозитория не
+менялись, запись в out/ не велась; снимок сделан headless Chrome
+1920x1080. Данные на карточках — живые ответы :8891.
+

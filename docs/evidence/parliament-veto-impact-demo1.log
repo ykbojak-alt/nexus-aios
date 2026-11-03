@@ -1,0 +1,87 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+══════════════════════════════════════════════════════════════════
+    [scenario]     DEMO (синтетические индикаторы, реальная цена)
+    [swarm]        Initializing 100 autonomous trading agents... connected to MarginPad. Актив берёт скринер, а не фиксированный BTC/USDT.
+    [personas]     [personas] 100 уникальных персон · 15 семей · пример: TrendFollower-Aggressive, TrendFollower-Conservative, TrendFollower-RSI, TrendFollower-MACD, TrendFollower-EMA, TrendFollower-Volume
+    [swarm]        feed=demo exec=marginpad guard=2%/5%/shadow×6
+    [llm] Swarm configured: 15xMinimax, 15xGpt, 14xMercury, 14xOpenai/gpt, 14xMeta, 14xAgnes, 14xMistral
+    [execution] --no-execute: тест голосования — ордера отключены
+    [llm] Swarm active model: free/deepseek-v4-pro-0813
+    [data]         BTC 76824.00 RSI=28.0 MACD=+180.00 EMA9/21=+ объём=2.14 (SMA20 5.33, ×0.40) режим=TRENDING_UP [1m:28RSI, 15m:46RSI] [1m демо-индикаторы, 15m и объём — реальные свечи]
+    [mode]         NORMAL
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1
+    [memory]       Loaded 8 base rules + 1 learned lessons into agent context
+    [news]         sentiment +0.35 (demo-override — новости не опрашивались)
+    [swarm] Active Agents: 12/100 | Kills: 0 | Respawns: 0
+[llm] 404 openai/gpt-oss-120b (1/3) → fallback
+[llm] Fallback triggered for generator: openai/gpt-oss-120b → groq/openai/gpt-oss-120b
+[llm] 404 openai/gpt-oss-120b (2/3) → fallback
+[llm] Fallback triggered for generator: openai/gpt-oss-120b → groq/openai/gpt-oss-120b
+[llm] Blacklisted model openai/gpt-oss-120b for 15 min (3× 404 not_found)
+[llm] Fallback triggered for generator: openai/gpt-oss-120b → groq/openai/gpt-oss-120b
+[llm] 429 groq/openai/gpt-oss-120b (1/3) → fallback
+[llm] Rate-limit, fallback to free model: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] 429 groq/openai/gpt-oss-120b (2/3) → fallback
+[llm] Rate-limit, fallback to free model: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Blacklisted model groq/openai/gpt-oss-120b for 15 min (3× 429 rate_limit)
+[llm] Rate-limit, fallback to free model: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: groq/openai/gpt-oss-120b → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: mercury-3 → free/minimax-m3.1-flash
+[llm] Fallback triggered for generator: mercury-3 → free/minimax-m3.1-flash
+[llm] Skipped blacklisted model openai/gpt-oss-120b (15 min, not_found)
+[llm] Skipped blacklisted model openai/gpt-oss-120b (15 min, not_found)
+[parser] Recovered truncated JSON for mercury-3
+    [swarm] 🏛️ Technical Swarm (Round 1):
+       TrendFollower (Minimax): HOLD 0.60 (15m тренд вниз (EMA9<EMA21, MACD<0), 1m ложный пробой на низ)
+       MeanReversion (Gpt): HOLD 0.62 (15m price below EMA21 but volume_ratio 0.64 shows no panic s)
+       Scalper (Mercury): BUY 0.55 (1m MACD 180 > +10, TRENDING_UP, but RSI 28 oversold (past le)
+       Breakout (Openai/gpt): HOLD 0.72 (15m: price below EMA21, TRENDING_DOWN, low volume ratio 0.64)
+    [swarm] ⚔️ Technical Swarm (Round 2 - Debates):
+       TrendFollower: HOLD (0.60 → 0.62) (15m EMA9<EMA21, MACD<0, TRENDING_DOWN; 1m fakeout risk (vol )
+       MeanReversion: HOLD (0.62 → 0.72) (15m: price below EMA21, TRENDING_DOWN, RSI 46 neutral. 1m ov)
+       Scalper: BUY → HOLD (0.55 → 0.70) ← сменил голос (MACD>10 счит… [обрезано провайдером])
+       Breakout: HOLD 0.72 (15m price below EMA21, TRENDING_DOWN; 1m fakeout on 0.40x vo)
+    [swarm] 🏆 Technical Swarm Consensus: HOLD 0.69
+    [swarm] 🏛️ Sentiment Swarm (Round 1):
+       Analyst (Minimax): HOLD 0.60 (asset_sentiment missing; global sentiment neutral (0.35); no)
+       Contrarian (Gpt): HOLD 0.60 (RSI 28 перепродан, но урок запрещает лонг в этой зоне; объём)
+       Volatility (Mercury): HOLD 0.55 (RSI超卖但成交量极低（0.40），反弹缺动能；1m与15m趋势背离，未确认反转；波动率收缩。)
+       RsiWatcher (Openai/gpt): HOLD 0.60 (RSI 28 after 44 is oversold, but lesson warns against longs )
+    [swarm] 🏆 Sentiment Swarm Consensus: HOLD 0.59 (единогласно — дебаты не нужны)
+    [swarm] 🏛️ Risk Swarm (Round 1):
+       RiskManager (Minimax): HOLD 0.60 (Оба сентимента не подтверждают вход: глобальный фон слабый ()
+       StopHunter (Gpt): HOLD 0.60 (RSI 28 suggests oversold, but volume ratio 0.403 shows fakeo)
+       Hodler (Mercury): HOLD 0.85 (RSI 28 < 20 exception not met; volume ratio 0.403 shows fake)
+       MacdTrader (Openai/gpt): BUY 0.72 (MACD 180 > +50 strong signal; TRENDING_UP; 15m confirms tren)
+    [swarm] ⚔️ Risk Swarm (Round 2 - Debates):
+       RiskManager: HOLD (0.60 → 0.72) (RSI 28 oversold but volume ratio 0.403 = fakeout; 15m MACD n)
+       StopHunter: HOLD (0.60 → 0.55) (RSI 28 per lesson warns against long; volume ratio 0.403 = f)
+       Hodler: HOLD 0.85 (RSI 28 перепродан, но урок: лонг в этой зоне закрывался убыт)
+       MacdTrader: BUY → HOLD 0.72 ← сменил голос (Lesson warns against longs on oversold RSI; volume ratio 0.4)
+    [swarm] 🏆 Risk Swarm Consensus: HOLD 0.71
+    [swarm] Pool: 100 total, 12 active. 0 replacements this cycle.
+    [swarm]        12 agents voted: 0 BUY, 0 SELL, 12 HOLD.
+    [risk]         Profile: BALANCED | Win Streak: 0 | Loss Streak: 0
+──────────────────────────────────────────────────────────────────
+    ГЕНЕРАТОР │ предлагаю не торговать · score +0.00 · 0 за покупку, 0 за продажу, 12 воздержались
+    КРИТИК    │ возражений нет — все довольны
+    АРБИТР    │ ОТМЕНА — META-VERDICT: HOLD (Risk Swarm Veto — confidence 0.71 > 0.7)
+    [arbiter]      ⚖️ META-VERDICT: HOLD (Risk Swarm Veto — confidence 0.71 > 0.7) · HOLD и без вета — вето подтверждено
+    [darwin]       score = Σ(conf × weight): +0.000 · масса голосов 1.99 · средний вес 1.00
+──────────────────────────────────────────────────────────────────
+    [execution]    ордер не создан — вердикт HOLD (META-VERDICT: HOLD (Risk Swarm Veto — confidence 0.71 > 0.7))
+══════════════════════════════════════════════════════════════════
+  GRAND CYCLE COMPLETE — exit 0
+══════════════════════════════════════════════════════════════════

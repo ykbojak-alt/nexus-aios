@@ -29,14 +29,34 @@ Problem: an agent that holds a wallet can sign anything a prompt tells it to. Gu
 - Denied action → `denied` verdict logged, execution skipped. The wallet key never leaves `os.environ`; the policy gate sits between the model output and the OS.
 - Evidence: audit log per task `{command, role, verdict, ts}` — AI judges can replay policy decisions.
 
-## NEAR Intents lifecycle
+## On-chain escrow lifecycle (nexus-escrow v2)
+
+Every payment is a contract call on `nexus-escrow.yksunder.testnet`; there is
+no direct-transfer fallback. RPC endpoint: `https://test.rpc.fastnear.com`
+(`NEAR_RPC_URL`).
 
 ```
-1. Architect creates task intent: {worker, task_hash, reward, deadline}
-2. Worker accepts, executes, returns signed result
-3. cite_check/verifier marks result verified
-4. NearIntentPayer.pay() → intent settles (stub → real Intent API in prod)
-5. Receipt {intent_id, solver, status} appended to audit log
+1. create_task(task_id, deadline_ms)          — manager deposits the budget
+2. submit_bid(task_id, price_yocto, signature) — agent signs the price with
+   its ed25519 key; the contract runs env::ed25519_verify and rejects a
+   broken key on-chain (WebAssembly trap, no bid recorded)
+3. accept_bid(task_id, agent_id)              — manager picks the cheapest
+   verified bid; deadline enforced (ERR_TASK_EXPIRED)
+4. submit_work(task_id, work_hash)            — winner submits the result hash
+5. verify_and_release(task_id)                — winner paid winning_price,
+   remainder refunded to manager
+6. slash / refund_open_task                   — deadline miss: stake burned /
+   budget refunded
 ```
 
-Keys: `NEAR_ACCOUNT_ID`, `NEAR_PRIVATE_KEY` via env only. Wallet creation is manual (User's step, not code).
+The demo receipt contains real TxHashes for `create_task`, `submit_bid`,
+`accept_bid`, `submit_work`, `verify_and_release` plus explorer links.
+Contract v2 views expose reputation (`tasks_completed`, `tasks_failed`,
+`active`), `get_escrow_balance` and `get_burned`; the grand demo prints these
+counters after settlement.
+
+Keys: `NEAR_ACCOUNT_ID` + `NEAR_PRIVATE_KEY` (manager) and
+`NEAR_AGENT_ACCOUNT` + agent key via env or
+`~/.near-credentials/testnet/<account>.json` only. Keys are never printed or
+committed; `.env` is gitignored. Wallet creation is manual (User's step, not
+code).

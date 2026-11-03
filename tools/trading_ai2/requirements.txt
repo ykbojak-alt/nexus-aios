@@ -1,0 +1,7 @@
+# AI2 Live Trading Agent — зависимости
+ccxt>=4.5            # биржевой клиент (Binance public + Spot Testnet)
+pandas>=2.0          # свечи + расчёт индикаторов
+# pandas-ta>=0.4     # ОПЦИОНАЛЬНО: numba не собирается на Python 3.15 —
+                     # без него индикаторы считает встроенный pandas-фолбэк
+openai>=3.0          # DeepSeek API (OpenAI-compatible base_url)
+pydantic>=2.0        # жёсткая валидация JSON-решений LLM

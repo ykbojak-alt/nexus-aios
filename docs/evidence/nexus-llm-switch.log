@@ -1,0 +1,41 @@
+[bold yellow]N   N EEEEE X   X U   U  SSSS [/] [bold #ff1493] SSSS W   W  AAA  RRRR  M   M[/]
+[bold yellow]NN  N E      X X  U   U S     [/] [bold #ff1493]S     W   W A   A R  R  MM MM[/]
+[bold yellow]N N N EEE     X   U   U  SSS  [/] [bold #ff1493] SSS  W W W AAAAA RRRR  M M M[/]
+[bold yellow]N  NN E      X X  U   U     S [/] [bold #ff1493]    S WW WW A   A R  R  M   M[/]
+[bold yellow]N   N EEEEE X   X  UUU  SSSS  [/] [bold #ff1493]SSSS  W   W A   A R   R M   M[/]
+
+[dim]repo: D:\near-hackathon-nexus · python: C:\Python315\python.exe[/]
+[cyan][LLMs] Gen: 20xgemma-4-31b-it:free, 20xxing4.0-29b-a4b:free, 20xlfm-2.5-2.6b:free | Critic: nemotron-3-super-120b-a12b:free | Arbiter: gpt-oss-120b:free[/]  [dim]· клавиша [bold]M[/] — конфигуратор[/]
+
+[bold #ff1493]  ГЛАВНОЕ МЕНЮ[/]
+  [bold #ff1493][1][/]  🧠 Agent Economy (Research + Escrow)
+  [bold #ff1493][2][/]  📈 Swarm Trading (Three Minds + LLM Sentiment)
+  [bold #ff1493][3][/]  🔍 View On-Chain Stats
+  [bold #ff1493][4][/]  ❌ Exit
+
+[dim]дополнительно:[/] [bold]L[/] loop-режим · [bold]r[/] live-цикл · [bold]p[/] позиции · [bold]b[/] баланс · [bold]M[/] модель · [bold]x[/] стоп+закрыть всё · [bold]c[/] очистить
+
+
+[dim]── swarm-cycle: C:\Python315\python.exe -m tools.trading_ai2.demo_trading_grand ──[/]
+💰 [cyan][balance][/] Balance: $9,965.33 | Equity: $9,965.33 | Free: $9,965.33 | margin_in_use: $0.00 | PnL: +$0.00
+[1;94m ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗[0m
+[1;94m ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝[0m
+[1;95m ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗[0m
+[1;95m ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║[0m
+[95m ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║[0m
+[95m ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝[0m
+[1;36m      A I   O P E R A T I N G   S Y S T E M[0m
+[90m══════════════════════════════════════════════════════════════════[0m
+  NEXUS GRAND TRADING — swarm → minds → MarginPad
+[90m══════════════════════════════════════════════════════════════════[0m
+[95m    [scenario]     DEMO (синтетические индикаторы, реальная цена)[0m
+[36m    [swarm]        Initializing 60 autonomous trading agents... connected to MarginPad.[0m
+[90m    [swarm]        feed=demo exec=marginpad guard=2%/5%/shadow×6[0m
+[36m    [llm] Swarm configured: 20xGemma, 20xXing4.0, 20xLfm[0m
+[36m    [llm] Swarm active model: cohere/north-mini-code:free[0m
+[95m    [llm] Fallback to DeepSeek (key for GPT missing) → резерв https://openrouter.ai/api/v1: cohere/north-mini-code:free[0m
+[dim]python-probe: ccxt/pydantic/openai/requests ok[/]
+[36m    [data]         BTC 77360.00 RSI=28.0 MACD=+180.00 EMA9/21=+ [demo-индикаторы, цена MarginPad][0m
+[learning] уроков применено к рою: 1
+[learning] УРОК (лонг на перепроданном RSI): Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку. [наблюдений: 3]
+[learning] замечание: применено уроков: 1 из 1

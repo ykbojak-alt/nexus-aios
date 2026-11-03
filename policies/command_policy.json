@@ -1,11 +1,13 @@
 {
   "version": "1.0",
   "roles": {
-    "architect": {"allow": ["plan", "decompose", "hire", "verify", "create_intent"]},
-    "research-agent": {"allow": ["search", "read_source", "cite"]},
+    "architect": {"allow": ["plan", "decompose", "hire", "verify", "create_intent", "create_task", "accept_bid", "verify_and_release"]},
+    "research-agent": {"allow": ["search", "read_source", "cite", "submit_bid", "submit_work"]},
     "coder": {"allow": ["read_file", "write_file", "run_test"]},
     "runner": {"allow": ["run_python", "run_test", "collect_output"]},
-    "auditor": {"allow": ["read_report", "read_log", "tally"]}
+    "auditor": {"allow": ["read_report", "read_log", "tally"]},
+    "trading-desk": {"allow": ["announce_auction", "trade", "create_intent"]},
+    "risk-manager": {"allow": ["risk_check", "enforce_limits", "halt"]}
   },
   "deny": ["transfer_tokens", "sign_tx", "rm -rf", "format", "exfiltrate_env", "post_social", "export_private_key", "add_full_access_key", "delete_access_key", "transfer_near", "send_near"]
 }

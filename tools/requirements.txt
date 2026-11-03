@@ -1,3 +1,8 @@
 # Core tools, tests, and mock demo use only the Python standard library.
 # No pip install is required for offline tests or the mock swarm demo.
 # Optional for future real HTTP API integrations: httpx>=0.27
+#
+# Реальная подпись NEAR Testnet транзакций: встроенная в tools/near_rpc.py
+# (pure-Python ed25519 RFC 8032 + Borsh) — внешних зависимостей НЕТ.
+# near-api-py/py-near намеренно не используются: их цепочки (ed25519,
+# versioneer, borsh-construct) не собираются на Python 3.15.

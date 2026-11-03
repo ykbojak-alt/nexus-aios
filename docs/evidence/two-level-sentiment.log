@@ -1,0 +1,68 @@
+
+==============================================================================
+1) УРОВЕНЬ 1 — ГЛОБАЛЬНЫЙ ФОН (market_sentiment)
+==============================================================================
+источник: coindesk · заголовков: 3
+  1. Binance uncovers wider breach in $6.3 billion exploit, targets Sunday withdrawal restart
+  2. Wall Street analysts urge investors to buy crypto stocks after $6.3 billion Binance hack
+  3. Binance arranges $6.34 billion to cover losses from record crypto hack
+оценка: -0.65 (PANIC) · режим live · openai-compatible/free/deepseek-v4-pro-0813
+вывод: Крупнейший взлом Binance на $6.3 млрд, но аналитики призывают покупать акции
+
+==============================================================================
+2) УРОВЕНЬ 2 — НОВОСТИ ПО АКТИВУ (asset_sentiment · SOL)
+==============================================================================
+источник: cointelegraph/solana · заголовков: 3
+  1. Polygon expands Open Money Stack to Solana, after Tron rollout
+  2. Mirae Asset Securities issues tokenized notes on Solana
+  3. Hong Kong names Nasdaq-listed Solana Company a strategic enterprise
+оценка: +0.60 (EUPHORIA) · режим live · openai-compatible/free/deepseek-v4-pro-0813
+вывод: Позитив: расширение Polygon на Solana, токенизированные ноты Mirae Asset, признание в Гонконге.
+
+==============================================================================
+3) СНАПШОТ РЫНКА SOL/USDT (реальные свечи Binance)
+==============================================================================
+цена 94.8 · RSI 42.7 · MACD -0.0196 · ATR-рост -33.68% · режим TRENDING_DOWN
+
+==============================================================================
+4) ГОЛОС РОЯ — reason агента с двумя сентиментами
+==============================================================================
+market_sentiment=-0.65 (PANIC) · asset_sentiment=+0.60 (EUPHORIA)
+  [vote 01/13] TrendFollower-01 (15m·SOL/USDT) → SELL conf 0.55 w 1.00 · trend: EMA9<21, MACD -0, объём ×0.29
+  [vote 02/13] Contrarian-01 (1m·SOL/USDT) → HOLD conf 0.30 w 1.00 · contrarian: RSI 42.7 — нет крайности
+  [vote 03/13] RiskManager-01 (1m·SOL/USDT) → HOLD conf 0.50 w 1.00 · risk: тренд неясен — капитал важнее
+  [vote 04/13] Scalper-01 (1m·SOL/USDT) → HOLD conf 0.25 w 1.00 · scalp: рынок плоский
+  [vote 05/13] Analyst-01 (1m·SOL/USDT) → BUY  conf 0.64 w 1.00 · analyst: фон плохой -0.65, но по активу +0.60 — возможность
+  [vote 06/13] Breakout-01 (15m·SOL/USDT) → HOLD conf 0.30 w 1.00 · breakout: -0.5% — внутри диапазона
+  [vote 07/13] MeanReversion-01 (15m·SOL/USDT) → HOLD conf 0.35 w 1.00 · mr: отклонение -0.5%
+  [vote 08/13] MacdTrader-01 (1m·SOL/USDT) → HOLD conf 0.30 w 1.00 · macd: -0 — нулевая зона
+  [vote 09/13] Momentum-01 (1m·SOL/USDT) → HOLD conf 0.30 w 1.00 · momentum: MACD -0 — импульс слаб
+  [vote 10/13] RsiWatcher-01 (1m·SOL/USDT) → HOLD conf 0.30 w 1.00 · rsi-watch: 42.7 — динамики нет
+  [vote 11/13] Volatility-01 (1m·SOL/USDT) → HOLD conf 0.35 w 1.00 · vol: тренда нет
+  [vote 12/13] StopHunter-01 (1m·SOL/USDT) → HOLD conf 0.30 w 1.00 · stop-hunt: RSI 42.7 — скоплений нет
+  [vote 13/13] Hodler-01 (1m·SOL/USDT) → HOLD conf 0.60 w 1.00 · hodler: не торгую — храню
+
+фрагмент промпта персоны (правило двух сентиментов):
+  У тебя два сентимента: market_sentiment (глобальный фон рынка) и asset_sentiment (новости именно по SOL/USDT)
+
+==============================================================================
+5) ЖИВОЙ LLM-АГЕНТ — решение по двум сентиментам
+==============================================================================
+модель: free/minimax-m3.1-flash через https://api.apinex.bond/v1
+вход модели: market_sentiment=-0.65 · asset_sentiment=+0.60 · цена 94.8 · RSI 42.7
+ответ модели: BUY conf 0.90 stop 93.9 · Расхождение: фон рынка -0.65, новости по SOL/USDT +0.6 — возможность. Объём на 1m повышен (1.25x), стоп ниже локального минимума.
+
+==============================================================================
+6) МАТРИЦА РЕШЕНИЙ ANALYST (реальный код персоны)
+==============================================================================
+  фон -0.65 / актив -0.70 → HOLD conf 0.65 · analyst: оба сентимента плохие (фон -0.65, актив -0.70) — не вхожу
+  фон -0.65 / актив +0.42 → BUY  conf 0.57 · analyst: фон плохой -0.65, но по активу +0.42 — возможность
+  фон +0.55 / актив +0.48 → BUY  conf 0.59 · analyst: по активу +0.48, фон +0.55 — позитив
+  фон +0.20 / актив -0.55 → SELL conf 0.62 · analyst: по активу -0.55, фон +0.20 — негатив
+
+==============================================================================
+7) ПРАВИЛА БАЗЫ ЗНАНИЙ ПРО ДВА СЕНТИМЕНТА
+==============================================================================
+  #2: Никогда не покупай (BUY), если RSI > 75, а новостной фон негативный: оба сентимента плохие (market_sentiment < -0.3 и asset_sentiment < -0.3). Это ловушка эйфории.
+  #7: Два сентимента — глобальный (market_sentiment) и по активу (asset_sentiment). Если глобальный фон плохой, а по твоей монете новости хорошие — это возможность (риск ограничен стоп-лоссом); если оба плохие — не входи.
+

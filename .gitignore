@@ -1,1 +1,12 @@
 __pycache__/
+.env
+.env.*
+!.env.example
+
+# Rust контракты — сборочные артефакты
+contracts/**/target/
+
+# Рантайм-состояние роя: веса, репутация и журнал пересчёта
+tools/trading_ai2/swarm/weights.json
+tools/trading_ai2/swarm/weights.log
+tools/trading_ai2/swarm/reputation.json

@@ -1,0 +1,29 @@
+{
+  "schema": "ai2.lessons/1",
+  "generated_at": 1793362928.153,
+  "lessons": [
+    {
+      "id": "trade_loss:buy_oversold",
+      "kind": "trade_loss",
+      "title": "лонг на перепроданном RSI",
+      "rule": "Не входи в лонг при перепроданном RSI: входы в этой зоне закрывались убытком — дождись разворота по тренду или пропусти сделку.",
+      "evidence": 3,
+      "share": 1.0,
+      "keywords": [
+        "buy",
+        "rsi_oversold"
+      ],
+      "universal": false
+    }
+  ],
+  "source": [
+    "D:\\near-hackathon-nexus\\runs\\trading\\traj"
+  ],
+  "runs": 25,
+  "failed_runs": 3,
+  "files": 25,
+  "configs": {
+    "trading": 25
+  },
+  "patterns": 1
+}

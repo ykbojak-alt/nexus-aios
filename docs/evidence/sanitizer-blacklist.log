@@ -1,0 +1,52 @@
+
+========================================================================
+1. ЧЁРНЫЙ СПИСОК: платная модель без баланса (реальный 402)
+========================================================================
+маршрут: https://openrouter.ai/api/v1 · ключ: …0552
+[llm] Blacklisted key …0552 of google/gemini-2.5-flash-lite for 15 min (402 insufficient balance)
+[llm] Key rotation: google/gemini-2.5-flash-lite → следующий ключ пула
+[llm] Blacklisted key …cdd4 of google/gemini-2.5-flash-lite for 15 min (402 insufficient balance)
+[llm] Key rotation: google/gemini-2.5-flash-lite → следующий ключ пула
+ответ модели: '{\n  "message": "Hello! How can I help you today?"\n}'
+время: 5.8s
+чёрный список: {'google/gemini-2.5-flash-lite|…0552': 897.2, 'google/gemini-2.5-flash-lite|…cdd4': 898.8}
+причина: ''
+
+========================================================================
+2. ЧЁРНЫЙ СПИСОК: повторный запрос к мёртвой модели — запрос НЕ тратится
+========================================================================
+[llm] Skipped blacklisted key …0552 of google/gemini-2.5-flash-lite (15 min, rate_limit) → следующий ключ пула
+[llm] Skipped blacklisted key …cdd4 of google/gemini-2.5-flash-lite (15 min, rate_limit) → следующий ключ пула
+ответ: '{\n  "message": "Hello! How can I help you today?"\n}'
+время: 0.7s (провайдер не дёргали — модель в чёрном списке)
+чёрный список не изменился: 2 → 2
+
+========================================================================
+3. JSON SANITIZER: настоящий ответ free-модели, обрезанный провайдером
+========================================================================
+[llm] Blacklisted key …0552 of cohere/north-mini-code:free for 15 min (402 insufficient balance)
+[llm] Key rotation: cohere/north-mini-code:free → следующий ключ пула
+ответ провайдера (240 симв.): '{\n  "action": "buy",\n  "amount_percent": 10,\n  "reason": "RSI на уровне 24 указывает на перепроданность; восходящий тренд указывает на потенциальное изменение направления и рост, что создает возможность для покупки.",\n  "stop_loss": 75000\n}'
+
+обрезанный ответ (144 симв.): '{\n  "action": "buy",\n  "amount_percent": 10,\n  "reason": "RSI на уровне 24 указывает на перепроданность; восходящий тренд указывает на потенциал'
+[parser] Recovered truncated JSON for cohere/north-mini-code:free
+
+→ action=BUY mode=sanitized confidence=0.0 amount=10.0 stop=78400.0
+→ reason: 'RSI на уровне 24 указывает на перепроданность; восходящий тренд указывает на потенциал… [обрезано провайдером]'
+
+========================================================================
+4. JSON SANITIZER: мусор → HOLD с reason "parse_error"
+========================================================================
+→ action=HOLD mode=parse_fallback reason='parse_error'
+
+========================================================================
+5. ДАРВИНОВСКИЕ ВЕСА: score = Σ(conf × weight)
+========================================================================
+score с весами   = +0.875 (масса голосов 2.56)
+score без весов  = +0.000 (голоса равны — шум)
+
+========================================================================
+ИТОГ
+========================================================================
+чёрный список: {'google/gemini-2.5-flash-lite|…0552': 885.6, 'google/gemini-2.5-flash-lite|…cdd4': 887.2, 'cohere/north-mini-code:free|…0552': 890.9}
+готово.

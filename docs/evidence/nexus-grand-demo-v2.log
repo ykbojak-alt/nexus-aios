@@ -1,0 +1,110 @@
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents
+══════════════════════════════════════════════════════════════════
+
+[1/6] Менеджер получил задачу: 'What are the key features of NEAR Protocol and its ecosystem?'
+    manager=yksunder.testnet  agent=research-bot.testnet  budget=0.050 NEAR
+    contract=nexus-escrow.yksunder.testnet (strict, fallback отключён)
+
+[2/6] Контракт и аукцион (live log):
+──────────────────────────────────────────────────────────────────
+    ⛓️  [contract] nexus-escrow.yksunder.testnet deployed, balance=4.545672 NEAR
+    ⛓️  [contract] register_agent       already registered (stake=1.000000 NEAR, key=ed25519:4mSpipPSbmBdJUgodowiYFzU3htebWwZxpZj7WYLuJwk) → 
+    [auction] менеджер yksunder.testnet объявил задачу auction-113426-4aa9cb — бюджет 0.050 NEAR
+    ⛓️  [contract] create_task          TxHash: HtMQFqkp4nq5r2DTY2YQ14aWkyMi2GWA1MZmhDD2zhbZ → nexus-escrow.yksunder.testnet
+    ⛓️  [contract] submit_bid           TxHash: GQAWdLF2tLuWWfTJBW2F7g8boJmYHxEFNcp6XcnZFaBg → nexus-escrow.yksunder.testnet
+    [bid] research-agent   0.0241 NEAR — verified
+    ⛓️  [contract] submit_bid           TxHash: E8ejvGW1ryn7jQm2UwQAbF8jQBwhBHXmYq9q8We1uXmq → nexus-escrow.yksunder.testnet — FAILED: WebAssembly trap: An `unreachable` opcode was executed.
+    🛡️  [bid] freelancer       0.0161 NEAR — REJECTED (ed25519_verify failed: WebAssembly trap: An `unreachable` opcode was executed.)
+    [bid] analyst          0.0274 NEAR — local quote (not registered on-chain)
+    🏆 [auction] победитель: research-agent @ 0.0241 NEAR
+    ⛓️  [contract] accept_bid           TxHash: G5rk4FBfaU4M8KG1zEybSearS3hVHSkATRR4Fx1y5U6E → nexus-escrow.yksunder.testnet
+    [work] research-agent: Plan→Act→Observe (live при ключах, иначе stub)
+    [work] research-agent завершил: sources=1 mode=live verified=True
+    ⛓️  [contract] submit_work          TxHash: CxMkzq4wPSNd7TmwrqEFHh6ESXkofZm77gEiaJSCMJJw → nexus-escrow.yksunder.testnet
+    ⛓️  [contract] verify_and_release   TxHash: Hy7HwiiwV8hLoyjoGv6W2exFHMFq8Jd78PRnkx7KuKiL → nexus-escrow.yksunder.testnet
+    ⚡ [settle] intent intent-9388df0ae121b384 → status=settled mode=contract
+──────────────────────────────────────────────────────────────────
+
+[3/6] Победитель research-agent (research-bot.testnet) выполняет работу
+    mode=live sources=1 verified=True
+    URL 200 https://www.near.org/blog/the-beginners-guide-to-the-near-blockchain
+
+[4/6] Сдача работы и расчёт через контракт:
+    NEAR Intent:
+    {
+      "action": "pay_for_service",
+      "service": "Tavily_Search",
+      "amount": 0.0241,
+      "currency": "NEAR",
+      "intent_id": "intent-9388df0ae121b384",
+      "payer": "yksunder.testnet",
+      "solver": "research-bot.testnet",
+      "task_id": "auction-113426-4aa9cb",
+      "contract": "nexus-escrow.yksunder.testnet",
+      "deadline_ms": 1793349606428,
+      "ts": 1793349306428
+    }
+    verify_and_release: TxHash: Hy7HwiiwV8hLoyjoGv6W2exFHMFq8Jd78PRnkx7KuKiL
+      Explorer: https://testnet.nearblocks.io/txns/Hy7HwiiwV8hLoyjoGv6W2exFHMFq8Jd78PRnkx7KuKiL
+
+[5/6] TxHash вызовов контракта:
+    ↺ register_agent       already registered  stake=1.000000 NEAR
+    ✓ create_task          HtMQFqkp4nq5r2DTY2YQ14aWkyMi2GWA1MZmhDD2zhbZ
+    ✓ submit_bid           GQAWdLF2tLuWWfTJBW2F7g8boJmYHxEFNcp6XcnZFaBg
+    ✗ submit_bid           E8ejvGW1ryn7jQm2UwQAbF8jQBwhBHXmYq9q8We1uXmq  (WebAssembly trap: An `unreachable` opcode was executed.)
+    ✓ accept_bid           G5rk4FBfaU4M8KG1zEybSearS3hVHSkATRR4Fx1y5U6E
+    ✓ submit_work          CxMkzq4wPSNd7TmwrqEFHh6ESXkofZm77gEiaJSCMJJw
+    ✓ verify_and_release   Hy7HwiiwV8hLoyjoGv6W2exFHMFq8Jd78PRnkx7KuKiL
+
+[6/6] Балансы (liquid, NEAR):
+    research-bot.testnet   0.166371 → 0.189670  (+0.023299)
+    yksunder.testnet       0.259934 → 0.235160  (-0.024773)
+    репутация research-bot.testnet: completed=3 failed=0 active=True
+    escrow=0.000000 NEAR  burned=1.100000 NEAR  (v2 counters)
+
+══════════════════════════════════════════════════════════════════
+  ФИНАЛЬНЫЙ ОТВЕТ
+──────────────────────────────────────────────────────────────────
+  │ NEAR Protocol выделяется несколькими ключевыми особенностями: [Source:
+  │ https://www.near.org/blog/the-beginners-guide-to-the-near-blockchain]
+
+  │ * **Экономика на уровне протокола** – вся экономическая модель сети
+  │ встроена непосредственно в протокол, что позволяет любому желающему
+  │ участвовать в валидации, запуская собственный узел. Пользователи
+  │ оплачивают услуги сети, а поставщики мощности получают вознаграждение за
+  │ их использование, что обеспечивает самодостаточность системы без скрытых
+  │ коммерческих интересов.
+
+  │ * **Открытая валидация** – нет «тёмной компании» за протоколом; каждый
+  │ может стать валидатором, что способствует децентрализации и
+  │ справедливому распределению наград.
+
+  │ * **Фокус на экосистеме** – ценность NEAR растёт с увеличением
+  │ количества приложений и пользователей. Проект ориентирован на широкое
+  │ принятие и активное использование платформы.
+
+  │ * **Разработчикам-friendly** – NEAR предлагает контрактную основу,
+  │ которая, как ожидается, упрощает разработку децентрализованных
+  │ приложений.
+
+  │ Эти элементы вместе создают самодостаточную, ориентированную на
+  │ сообщество блокчейн-платформу, которая ставит своей главной целью
+  │ достижение массового adoption и активного использования.
+
+  │ **Источники:**
+  │ The Beginner’s Guide to the NEAR Blockchain –
+  │ https://www.near.org/blog/the-beginners-guide-to-the-near-blockchain
+──────────────────────────────────────────────────────────────────
+  Источники:
+    - https://www.near.org/blog/the-beginners-guide-to-the-near-blockchain
+══════════════════════════════════════════════════════════════════
+verified=True | audit_log: decompose → hire → create_task → submit_bid → submit_bid → accept_bid → submit_work → verify → create_intent → verify_and_release
+══════════════════════════════════════════════════════════════════

@@ -1,0 +1,113 @@
+Error in import line from C:\Users\BoJaK\AppData\Roaming\Python\Python315\site-packages\distutils-precedence.pth: import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim();
+  Traceback (most recent call last):
+    File "<frozen site>", line 539, in _exec_imports
+    File "<string>", line 1, in <module>
+  AttributeError: module '_distutils_hack' has no attribute 'add_shim'
+ ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
+ ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
+ ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
+ ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║
+ ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║
+ ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+      A I   O P E R A T I N G   S Y S T E M
+══════════════════════════════════════════════════════════════════
+  NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents
+══════════════════════════════════════════════════════════════════
+
+[1/6] Менеджер получил задачу: 'What is NEAR Intents and how does it enable agent payments?'
+    manager=yksunder.testnet  agent=research-bot.testnet  budget=0.050 NEAR
+    contract=nexus-escrow.yksunder.testnet (strict, fallback отключён)
+
+[2/6] Контракт и аукцион (live log):
+──────────────────────────────────────────────────────────────────
+    ⛓️  [contract] nexus-escrow.yksunder.testnet deployed, balance=2.495628 NEAR
+    ⛓️  [contract] register_agent       already registered (stake=1.000000 NEAR, key=ed25519:4mSpipPSbmBdJUgodowiYFzU3htebWwZxpZj7WYLuJwk) → 
+    [auction] менеджер yksunder.testnet объявил задачу auction-013746-a0bbe5 — бюджет 0.050 NEAR
+    ⛓️  [contract] create_task          TxHash: 8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG → nexus-escrow.yksunder.testnet
+    ⛓️  [contract] submit_bid           TxHash: EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4 → nexus-escrow.yksunder.testnet
+    [bid] research-agent   0.0239 NEAR — verified
+    ⛓️  [contract] submit_bid           TxHash: Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L → nexus-escrow.yksunder.testnet — FAILED: WebAssembly trap: An `unreachable` opcode was executed.
+    🛡️  [bid] freelancer       0.0159 NEAR — REJECTED (ed25519_verify failed: WebAssembly trap: An `unreachable` opcode was executed.)
+    [bid] analyst          0.0272 NEAR — local quote (not registered on-chain)
+    🏆 [auction] победитель: research-agent @ 0.0239 NEAR
+    ⛓️  [contract] accept_bid           TxHash: 6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC → nexus-escrow.yksunder.testnet
+    [work] research-agent: Plan→Act→Observe (live при ключах, иначе stub)
+    [work] research-agent завершил: sources=2 mode=live verified=True
+    ⛓️  [contract] submit_work          TxHash: E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB → nexus-escrow.yksunder.testnet
+    ⛓️  [contract] verify_and_release   TxHash: 3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn → nexus-escrow.yksunder.testnet
+    ⚡ [settle] intent intent-857daad5d8cff909 → status=settled mode=contract
+──────────────────────────────────────────────────────────────────
+
+[3/6] Победитель research-agent (research-bot.testnet) выполняет работу
+    mode=live sources=2 verified=True
+    URL 200 https://www.near.org/intents
+    URL 200 https://docs.near.org/chain-abstraction/intents/overview
+
+[4/6] Сдача работы и расчёт через контракт:
+    NEAR Intent:
+    {
+      "action": "pay_for_service",
+      "service": "Tavily_Search",
+      "amount": 0.0239,
+      "currency": "NEAR",
+      "intent_id": "intent-857daad5d8cff909",
+      "payer": "yksunder.testnet",
+      "solver": "research-bot.testnet",
+      "task_id": "auction-013746-a0bbe5",
+      "contract": "nexus-escrow.yksunder.testnet",
+      "deadline_ms": 1793659402342,
+      "ts": 1793659102342
+    }
+    verify_and_release: TxHash: 3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn
+      Explorer: https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn
+
+[5/6] TxHash вызовов контракта:
+    ↺ register_agent       already registered  stake=1.000000 NEAR
+    ✓ create_task          8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG
+    ✓ submit_bid           EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4
+    ✗ submit_bid           Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L  (WebAssembly trap: An `unreachable` opcode was executed.)
+    ✓ accept_bid           6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC
+    ✓ submit_work          E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB
+    ✓ verify_and_release   3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn
+
+[6/6] Балансы (liquid, NEAR):
+    research-bot.testnet   0.357194 → 0.380482  (+0.023288)
+    yksunder.testnet       2.109869 → 2.085296  (-0.024573)
+    репутация research-bot.testnet: completed=11 failed=0 active=True
+    escrow=0.000000 NEAR  burned=1.100000 NEAR  (v2 counters)
+
+══════════════════════════════════════════════════════════════════
+  ФИНАЛЬНЫЙ ОТВЕТ
+──────────────────────────────────────────────────────────────────
+  │ NEAR Intents — это многосетевой протокол транзакций, в котором
+  │ пользователи и ИИ-агенты формулируют желаемый результат (например,
+  │ «обменять токен A на токен B»), а не конкретные шаги исполнения [Source:
+  │ https://docs.near.org/chain-abstraction/intents/overview]. Заявка
+  │ (intent) транслируется в сеть маркет-мейкеров, называемых решателями
+  │ (solvers) [Source:
+  │ https://docs.near.org/chain-abstraction/intents/overview].
+  │ Децентрализованная оффчейн-сеть решателей конкурирует за выполнение
+  │ запроса наиболее оптимальным способом и предлагает пользователю/агенту
+  │ лучшую котировку на утверждение [Source:
+  │ https://docs.near.org/chain-abstraction/intents/overview].
+
+  │ Для агентских платежей это означает, что ИИ-агент может автономно
+  │ выразить намерение (например, оплатить задачу или перевести активы), а
+  │ сеть решателей находит и исполняет наилучший способ его выполнения —
+  │ будь то своп, мост или кросс-чейн транзакция [Source:
+  │ https://www.near.org/intents]. NEAR Intents абстрагирует сложность
+  │ кросс-чейн исполнения, позволяя ценности перемещаться мгновенно туда,
+  │ где это нужно [Source: https://www.near.org/intents].
+
+  │ Источники:
+  │ 1. https://www.near.org/intents — NEAR Intents | Simplifying Web3
+  │ Interactions
+  │ 2. https://docs.near.org/chain-abstraction/intents/overview — NEAR
+  │ Intents - NEAR Docs
+──────────────────────────────────────────────────────────────────
+  Источники:
+    - https://www.near.org/intents
+    - https://docs.near.org/chain-abstraction/intents/overview
+══════════════════════════════════════════════════════════════════
+verified=True | audit_log: decompose → hire → create_task → submit_bid → submit_bid → accept_bid → submit_work → verify → create_intent → verify_and_release
+══════════════════════════════════════════════════════════════════

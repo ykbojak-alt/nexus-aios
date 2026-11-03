@@ -1,0 +1,3 @@
+{"seq": 0, "ts": 1793389411.472, "run_id": "trading-1793389411-ee751b", "type": "run_start", "schema": "0.1", "task_id": "торговая задача: BTC/USDT; направление sell; условия rsi_neutral trend_down sentiment_unknown; цена 0.01; RSI 40.4", "evaluator_hash": "", "constitution_hash": ""}
+{"seq": 1, "ts": 1793389411.473, "run_id": "trading-1793389411-ee751b", "type": "config", "name": "trading", "models": {"swarm": "60 агентов"}}
+{"seq": 2, "ts": 1793389411.474, "run_id": "trading-1793389411-ee751b", "type": "learning", "lessons": [], "issues": []}

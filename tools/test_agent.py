@@ -11,6 +11,20 @@ from loop_guard import LoopGuard
 from near_intent_payer import NearIntentPayer
 import research_agent_demo as ra
 
+# Юнит-тесты строго офлайн: NEAR_* и .env не должны включать testnet/LLM
+# контур — иначе появление .env с ключами превратит тесты в живые отправки.
+for _n in ("NEAR_ACCOUNT_ID", "NEAR_PRIVATE_KEY", "NEAR_RECEIVER_ID",
+           "NEAR_DEMO_AMOUNT", "NEAR_RPC_URL", "NEAR_ESCROW_CONTRACT",
+           "NEAR_AGENT_ACCOUNT", "NEAR_AGENT_PRIVATE_KEY",
+           "NEAR_AGENT_KEYS_JSON", "NEAR_CREDENTIALS_DIR"):
+    os.environ.pop(_n, None)
+try:
+    import research_agent_clients as _rac
+    _rac._DOTENV_CACHE = {}
+    _rac._AI2_CACHE = {}
+except ImportError:
+    pass
+
 
 def _install_verified_mock():
     original_search = ra.search_tavily
@@ -122,19 +136,139 @@ def test_loopguard_allows_and_audits():
 def test_orchestrator_audits_hire_verify_and_payment():
     import orchestrator_demo
 
-    result = asyncio.run(orchestrator_demo.main("verified swarm task"))
+    # research-стадия — стаб: контракт аукциона проверяется офлайн.
+    # Живой мост покрыт test_run_research_loop_* в tests/test_research_agent.py.
+    orig_live = ra.live_configured
+    ra.live_configured = lambda: False
+    try:
+        result = asyncio.run(orchestrator_demo.main("verified swarm task"))
+    finally:
+        ra.live_configured = orig_live
     assert result["architect"] == "architect.near"
-    assert result["stages"]["research"]["winner"] == "research-agent"
-    assert result["stages"]["audit"]["output"]["verdict"] == "pass"
-    expected_commands = ["decompose"] + [
-        command
-        for _ in range(3)
-        for command in ("hire", "verify", "create_intent")
-    ]
-    assert [entry["command"] for entry in result["audit_log"]] == expected_commands
-    assert len(result["payment_receipts"]) == 3
-    assert all(receipt["status"] == "settled" for receipt in result["payment_receipts"])
-    assert len(result["rejected_bids"]) == 7
+    assert result["winner"]["worker"] == "research-agent"
+    assert result["winner"]["price"] <= result["task"]["budget"]
+    assert result["output"]["skill"] == "research"
+    # Контрактные вызовы тоже проходят LoopGuard — аудит честно шире,
+    # чем у off-chain версии (submit_bid/freelancer — только on-chain,
+    # поэтому здесь их нет).
+    assert [e["command"] for e in result["audit_log"]] == [
+        "decompose", "hire", "create_task", "accept_bid", "submit_work",
+        "verify", "create_intent"]
+    assert len(result["payment_receipts"]) == 1
+    receipt = result["payment_receipts"][0]
+    assert receipt["status"] == "settled"
+    assert receipt["solver"] == "research-bot.testnet"
+    assert receipt["intent"]["action"] == "pay_for_service"
+    # freelancer с битой ed25519-подписью отвергнут — дешевизна не спасла
+    assert [b["worker"] for b in result["rejected_bids"]] == ["freelancer"]
+    assert result["rejected_bids"][0]["reason"] == "ed25519_verify failed"
+    assert any("REJECTED" in l for l in result["auction_log"])
+    assert any("победитель" in l for l in result["auction_log"])
+
+
+def test_intent_payload_structure():
+    """Intent — декларация оплаты сервиса, а не голый transfer."""
+    payer = NearIntentPayer()
+    r = payer.pay("research-agent", "t1", 0.03, service="Tavily_Search")
+    it = r["intent"]
+    assert it["action"] == "pay_for_service"
+    assert it["service"] == "Tavily_Search"
+    assert it["amount"] == 0.03 and it["currency"] == "NEAR"
+    assert it["intent_id"] == r["intent_id"]
+    assert it["solver"] == "research-agent"
+    assert it["task_id"] == "t1"
+    assert it["deadline_ms"] > it["ts"]
+    # default-сервис выводится из worker_id
+    r2 = NearIntentPayer().pay("coder", "t2", 1.0)
+    assert r2["intent"]["service"] == "coder:agent_work"
+
+
+def test_auction_rejects_over_budget():
+    """Бюджет 0.01 < всех котировок → верифицированных bids нет."""
+    import orchestrator_demo
+    orig_live = ra.live_configured
+    ra.live_configured = lambda: False
+    try:
+        result = asyncio.run(
+            orchestrator_demo.run_auction("q", budget=0.01))
+    finally:
+        ra.live_configured = orig_live
+    assert result["winner"] is None
+    assert result["payment_receipts"] == []
+    reasons = {b["worker"]: b["reason"] for b in result["rejected_bids"]}
+    assert reasons["research-agent"] == "over budget"
+    assert reasons["analyst"] == "over budget"
+    assert reasons["freelancer"] == "over budget"  # цена отсекается раньше подписи
+
+
+def test_grand_demo_offline_flow():
+    """Grand demo end-to-end офлайн: аукцион → intent → stub-чек → ответ."""
+    import hackathon_grand_demo as gd
+    orig_live = ra.live_configured
+    ra.live_configured = lambda: False
+    try:
+        res = asyncio.run(gd.main("test query", emit=None))
+    finally:
+        ra.live_configured = orig_live
+    a = res["auction"]
+    assert a["winner"]["worker"] == "research-agent"
+    assert a["winner"]["price"] <= a["task"]["budget"]
+    pay = res["payment"]
+    assert pay["status"] == "settled" and pay["mode"] == "stub"
+    assert pay["intent"]["action"] == "pay_for_service"
+    assert pay["intent"]["service"] == "Tavily_Search"
+    assert res["answer"]
+    assert [e["command"] for e in a["audit_log"]] == [
+        "decompose", "hire", "create_task", "accept_bid", "submit_work",
+        "verify", "create_intent"]
+
+
+def test_trading_demo_offline_flow():
+    """Аукцион стратегий end-to-end офлайн: momentum выигрывает торг,
+    quant_fund отсекается по чексумме, paper-цикл и stub-чек комиссии."""
+    import trading_agent_demo as td
+    res = td.run_demo(feed=td.MockFeed(), wait_s=0, emit=None)
+    assert res["winner"]["worker"] == "momentum"
+    assert [b["worker"] for b in res["rejected_bids"]] == ["quant_fund"]
+    assert res["rejected_bids"][0]["reason"] == "checksum mismatch"
+    assert res["payment"]["status"] == "settled"
+    assert res["payment"]["intent"]["action"] == "pay_for_service"
+    assert res["report"]["mode"] == "stub_prices"
+    assert res["report"]["trades"] >= 1
+    cmds = [e["command"] for e in res["audit_log"]]
+    assert cmds[0] == "decompose" and "risk_check" in cmds
+    assert "create_intent" in cmds
+    denied = [e for e in res["audit_log"] if e["command"] == "transfer_near"]
+    assert denied and denied[0]["verdict"] == "denied"
+
+
+def test_trading_stop_loss_and_drawdown_enforced():
+    """Падение ниже −1.5% → stop-loss закрывает позицию; крах −60% на всех
+    позициях → drawdown > 5% → halt через LoopGuard."""
+    import trading_agent_demo as td
+    ticks = (
+        {"BTCUSDT": (100.0, 2.40), "ETHUSDT": (50.0, -1.80),
+         "NEARUSDT": (10.0, 5.10), "SOLUSDT": (20.0, -3.20),
+         "DOGEUSDT": (1.0, 0.60)},
+        {"BTCUSDT": (101.0, 2.80), "ETHUSDT": (50.0, -2.60),
+         "NEARUSDT": (9.80, 3.0), "SOLUSDT": (19.8, -4.0),
+         "DOGEUSDT": (1.0, 1.0)},
+    )
+    out = []
+    res = td.run_demo(feed=td.MockFeed(ticks), wait_s=0, emit=out.append)
+    closed = [p for p in res["cycle"]["positions"] if p["closed"]]
+    assert closed and closed[0]["symbol"] == "NEARUSDT"
+    assert any("stop-loss" in l for l in out)
+
+    crash = (
+        {s: (100.0, 3.0) for s in td.SYMBOLS},
+        {s: (40.0, -50.0) for s in td.SYMBOLS},
+    )
+    out2 = []
+    res2 = td.run_demo(feed=td.MockFeed(crash), wait_s=0, emit=out2.append)
+    assert res2["cycle"]["halted"] is True
+    assert any("drawdown limit" in l for l in out2)
+    assert any(e["command"] == "halt" for e in res2["audit_log"])
 
 
 def test_nebius_api_uses_embedded_prompt_not_cwd_file():

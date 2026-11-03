@@ -134,8 +134,98 @@ async def run_research(query: str, payer=None, task_id: str | None = None) -> di
             "unverified": unverified, "verified": verified, "payment": payment}
 
 
+def _load_loop_agent():
+    """Живой loop-агент (tools/research_agent.py) — импорт в обоих контекстах."""
+    try:
+        from research_agent import from_env  # плоский контекст: tools/ в sys.path
+    except ImportError:
+        from tools.research_agent import from_env  # пакетный контекст
+    return from_env()
+
+
+def live_configured() -> bool:
+    """Есть ли ключи для живого цикла (LLM + Tavily)."""
+    try:
+        from research_agent_clients import env
+    except ImportError:
+        try:
+            from tools.research_agent_clients import env
+        except ImportError:
+            return False
+    return bool(env("LLM_API_KEY") and env("TAVILY_API_KEY"))
+
+
+def run_research_loop(query: str, payer=None, task_id: str | None = None,
+                      agent=None) -> dict:
+    """Живой Plan→Act→Observe≤3 → cite_check → тот же payment-контракт.
+
+    agent=None → реальный агент из .env; без ключей — честный отказ.
+    В dict добавляются iterations/trace — судьям виден реальный цикл.
+    """
+    if agent is None:
+        if not live_configured():
+            return {"query": query, "mode": "live_unavailable",
+                    "answer": ("Нет ключей LLM_API_KEY/TAVILY_API_KEY — живой "
+                               "агент не запускается; моков не подставляем."),
+                    "sources": [], "unverified": [], "verified": False,
+                    "payment": None, "iterations": 0, "trace": []}
+        agent = _load_loop_agent()
+    res = agent.run(query)
+    sources = [Source(i + 1, s.get("title", ""), s.get("url", ""),
+                      s.get("content", ""))
+               for i, s in enumerate(res.sources)]
+    answer, unverified = cite_check(res.answer, sources)
+    cited = SOURCE_RE.findall(res.answer)
+    urls_ok = getattr(res, "verified", True)
+    verified = res.ok and bool(cited) and not unverified and urls_ok
+    payment = None
+    if payer is not None and verified:
+        if payer.loop_guard is not None:
+            payer.loop_guard.require("verify", payer.payer_role)
+        payment = payer.pay(
+            worker_id="research-agent",
+            task_id=task_id or "task-" + hashlib.sha256(query.encode("utf-8")).hexdigest()[:8],
+            amount=1.0,
+        )
+    return {"query": query, "mode": "live", "answer": answer,
+            "sources": [{"url": s.url, "title": s.title} for s in sources],
+            "unverified": unverified, "verified": verified, "payment": payment,
+            "url_status": getattr(res, "url_status", {}),
+            "iterations": res.iterations, "trace": res.trace}
+
+
 if __name__ == "__main__":
     import asyncio
     import sys
+    try:
+        from near_intent_payer import NearIntentPayer
+    except ImportError:
+        from tools.near_intent_payer import NearIntentPayer
     q = " ".join(sys.argv[1:]) or "What is Nebius Token Factory?"
-    print(json.dumps(asyncio.run(run_research(q)), ensure_ascii=False, indent=2))
+    payer = NearIntentPayer()  # verified answer → расчёт; без конфига — stub/simulated
+    if live_configured():      # ключи есть → живой цикл Plan→Act→Observe
+        res = run_research_loop(q, payer=payer)
+    else:                      # нет ключей → мок-контур, как раньше
+        res = asyncio.run(run_research(q, payer=payer))
+    print(json.dumps(res, ensure_ascii=False, indent=2))
+
+    try:
+        from ansi_demo import link as _ln, red as _rd, gold as _gd
+    except ImportError:
+        try:
+            from tools.ansi_demo import link as _ln, red as _rd, gold as _gd
+        except ImportError:
+            _ln = _rd = _gd = str
+
+    pay = res.get("payment")
+    if pay and pay.get("tx_hash"):   # реальный testnet-перевод — хэш для видео/судей
+        print("🪙 " + _ln(f"TxHash: {pay['tx_hash']}"))
+        print("   " + _ln(f"Explorer: {pay.get('explorer', '')}"))
+    elif pay:                        # чек есть, но отправка не случилась — причина видна
+        reason = pay.get("error") or pay.get("note") or pay.get("status")
+        print(_rd(f"Payment failed: {pay.get('status')} — {reason}"))
+    elif not res.get("verified"):    # платёжа не было потому что ответ не верифицирован
+        print(_gd("Payment skipped: answer not verified "
+                  "(нет валидных [Source:] цитат из вайтлист-источников)"))
+    else:                            # verified, но payer не был передан (API-вызовы без демо)
+        print(_gd("Payment skipped: payer not configured"))
