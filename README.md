@@ -122,3 +122,9 @@ python tools/test_agent.py            # 13 tests: payment + LoopGuard + orchestr
 ## Not in this repo
 
 The full NEXUS AiOS (UI, orchestration, Unreal integration) lives in a private repo. This repository is the hackathon-focused slice: Research Agent, AI-2 runtime adapter (`docs/ai2_runtime_example/research_agent.py`), security policies, and the escrow contract — everything a judge needs to verify the claims.
+
+## Second submission — HackWatch (Q-015 disclosure)
+
+NEXUS AiOS is an independent first submission by the same participant as [HackWatch](https://github.com/ykbojak-alt/hackwatch). Both projects disclose each other under hackathon rule Q-015.
+
+NEXUS AiOS — независимая первая заявка того же участника, что и [HackWatch](https://github.com/ykbojak-alt/hackwatch). Оба проекта раскрывают свою связь друг с другом согласно правилу хакатона Q-015.
