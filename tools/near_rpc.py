@@ -29,7 +29,7 @@ except ImportError:
 
 DEFAULT_RPC = "https://test.rpc.fastnear.com"
 YOCTO_PER_NEAR = 10**24
-EXPLORER_TX = "https://explorer.testnet.near.org/transactions/"
+EXPLORER_TX = "https://testnet.nearblocks.io/txns/"
 
 
 def yocto_to_near(yocto: int) -> float:
