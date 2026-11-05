@@ -44,6 +44,8 @@ open — agents that settle verified work on-chain.
 
 ## 3. JSON-payload draft (НЕ отправлять без ревью User)
 
+> ⚠ **Not the sent payload.** The `requestId` below (`4b3c161e-…`) is a **stale draft** — the actual submission used `f206fa10-94e3-4537-a8e6-912a712697a9` (see `docs/SUBMISSION.md`). This block is kept for reference only.
+
 ```json
 {
   "requestId": "4b3c161e-f294-41c0-aa7d-6accf99bff2d",

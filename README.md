@@ -35,18 +35,22 @@ One full lifecycle ran live (`docs/evidence/grand-demo-live-2026-11-02.log`):
 | Intent | NEAR Intent `intent-857daad5d8cff909` settled `mode=contract` (pay_for_service / Tavily_Search / 0.0239 NEAR) |
 | Payout | `research-bot.testnet` 0.357194 → 0.380482 (**+0.023288 NEAR**); escrow 0.000000 |
 
-### On-chain calls — 8 TxHashes (nearblocks)
+### On-chain calls — 6 live TxHashes + 2 deploy/registration (nearblocks)
 
-| # | Call | TxHash |
-|---|---|---|
-| 1 | deploy v2 | [`CBFpsgjCMPSvZHM692R1vM9GjyRJS9caYqVtuoc9q9qK`](https://testnet.nearblocks.io/txns/CBFpsgjCMPSvZHM692R1vM9GjyRJS9caYqVtuoc9q9qK) |
-| 2 | `register_agent` (stake 0.1 NEAR, ed25519 key) | [`4ppbsWwu1LSjePJZjfP3Kh2hKFE2BF83Y5yoNGjgKKYZ`](https://testnet.nearblocks.io/txns/4ppbsWwu1LSjePJZjfP3Kh2hKFE2BF83Y5yoNGjgKKYZ) |
-| 3 | `create_task` (budget 0.050 → escrow) | [`8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG`](https://testnet.nearblocks.io/txns/8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG) |
-| 4 | `submit_bid` — winning (verified) | [`EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4`](https://testnet.nearblocks.io/txns/EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4) |
-| 5 | `submit_bid` — **FAILED** (WASM trap, bad sig) | [`Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L`](https://testnet.nearblocks.io/txns/Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L) |
-| 6 | `accept_bid` (winner frozen) | [`6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC`](https://testnet.nearblocks.io/txns/6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC) |
-| 7 | `submit_work` (result hash) | [`E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB`](https://testnet.nearblocks.io/txns/E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB) |
-| 8 | `verify_and_release` (payout + refund) | [`3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn`](https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn) |
+Six of the eight hashes below come from the live grand demo run (`docs/evidence/grand-demo-live-2026-11-02.log`). The first two — `deploy v2` and `register_agent` — are the deploy/registration transactions recorded in `contracts/nexus_escrow/README.md`, not the live run (in that log the agent was already registered and shows no hash).
+
+| # | Call | TxHash | Source |
+|---|---|---|---|
+| 1 | deploy v2 | [`CBFpsgjCMPSvZHM692R1vM9GjyRJS9caYqVtuoc9q9qK`](https://testnet.nearblocks.io/txns/CBFpsgjCMPSvZHM692R1vM9GjyRJS9caYqVtuoc9q9qK) | `contracts/nexus_escrow/README.md` (deploy) |
+| 2 | `register_agent` (stake 0.1 NEAR — **v2** transaction; the live log shows the earlier v1 stake 1.0 NEAR) | [`4ppbsWwu1LSjePJZjfP3Kh2hKFE2BF83Y5yoNGjgKKYZ`](https://testnet.nearblocks.io/txns/4ppbsWwu1LSjePJZjfP3Kh2hKFE2BF83Y5yoNGjgKKYZ) | `contracts/nexus_escrow/README.md` (registration) |
+| 3 | `create_task` (budget 0.050 → escrow) | [`8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG`](https://testnet.nearblocks.io/txns/8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG) | live log |
+| 4 | `submit_bid` — winning (verified) | [`EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4`](https://testnet.nearblocks.io/txns/EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4) | live log |
+| 5 | `submit_bid` — **FAILED** (WASM trap, bad sig) | [`Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L`](https://testnet.nearblocks.io/txns/Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L) | live log |
+| 6 | `accept_bid` (winner frozen) | [`6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC`](https://testnet.nearblocks.io/txns/6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC) | live log |
+| 7 | `submit_work` (result hash) | [`E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB`](https://testnet.nearblocks.io/txns/E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB) | live log |
+| 8 | `verify_and_release` (payout + refund) | [`3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn`](https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn) | live log |
+
+> **Explorer note:** this table links to **nearblocks** (`testnet.nearblocks.io`). The demo page (`docs/demo/index.html`) links to **explorer** (`explorer.testnet.near.org`). Both are valid NEAR Testnet explorers; the URLs point to the same transactions.
 
 ### Agent reputation (on-chain counters)
 
