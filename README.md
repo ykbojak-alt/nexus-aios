@@ -177,3 +177,5 @@ The full NEXUS AiOS (UI, orchestration, Unreal integration) lives in a private r
 NEXUS AiOS is an independent first submission by the same participant as [HackWatch](https://github.com/ykbojak-alt/hackwatch). Both projects disclose each other under hackathon rule Q-015.
 
 NEXUS AiOS — независимая первая заявка того же участника, что и [HackWatch](https://github.com/ykbojak-alt/hackwatch). Оба проекта раскрывают свою связь друг с другом согласно правилу хакатона Q-015.
+
+Local farm metric: agent scores from completed waves (the latest wave changes the score, e.g. 7.75 -> 7.88). Snapshot: docs/evidence/farm-score.json.

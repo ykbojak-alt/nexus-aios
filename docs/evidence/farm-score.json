@@ -1,0 +1,57 @@
+{
+  "ts": "2026-11-08T16:44:48.0051787Z",
+  "ok": true,
+  "source": "D:\\nexus\\reports",
+  "max_waves": 65,
+  "formula": "score = 10 x (0.6 x waves/max + 0.4 x passRate) - 0.15 x FAIL + fresh(0.2 if <2h)",
+  "agents": {
+    "NEO2": {
+      "score": 7.08,
+      "waves": 38,
+      "pass": 32,
+      "fail": 0,
+      "unknown": 6,
+      "pass_rate": 0.842,
+      "last_wave": "NEO2-wave54.md",
+      "last_wave_age_min": 0,
+      "fresh": 0.2,
+      "delta": 0.0
+    },
+    "FORGE": {
+      "score": 7.92,
+      "waves": 63,
+      "pass": 30,
+      "fail": 0,
+      "unknown": 33,
+      "pass_rate": 0.476,
+      "last_wave": "FORGE-wave59.md",
+      "last_wave_age_min": 0,
+      "fresh": 0.2,
+      "delta": 0.12
+    },
+    "CODEX": {
+      "score": 4.77,
+      "waves": 27,
+      "pass": 14,
+      "fail": 0,
+      "unknown": 13,
+      "pass_rate": 0.519,
+      "last_wave": "CODEX-wave24.md",
+      "last_wave_age_min": 16,
+      "fresh": 0.2,
+      "delta": 0.0
+    },
+    "SPARK": {
+      "score": 8.54,
+      "waves": 65,
+      "pass": 38,
+      "fail": 0,
+      "unknown": 27,
+      "pass_rate": 0.585,
+      "last_wave": "SPARK-wave68a.md",
+      "last_wave_age_min": 2,
+      "fresh": 0.2,
+      "delta": 0.0
+    }
+  }
+}
