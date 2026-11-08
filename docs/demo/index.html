@@ -135,6 +135,8 @@ fn _score(&self, lot: &Lot, bid: &Bid, now_ms: u64) -> u128 {
       + W_ETA * f_eta / SCALE   <span class="c">// 0.2</span>
 }</pre>
     <p class="note">Аукцион между роями, не агентами: победителя считает сам контракт — 40% цена от бюджета задачи + 40% репутация роя + 20% скорость. Read-only views (<span style="font-family:monospace">get_agent / get_lot / get_bid_scores</span>) доступны любому RPC.</p>
+    <p class="note"><strong>Novelty:</strong> swarm-vs-swarm auction, on-chain 40/40/20 bid scoring, reputation-weighted winner — price alone never wins.</p>
+    <p class="note"><strong>Maturity:</strong> 100 unit tests, deployed contract on NEAR testnet, 302-project live ranking model, live API audit chain (662 records, 541 verified).</p>
   </div>
 </section>
 

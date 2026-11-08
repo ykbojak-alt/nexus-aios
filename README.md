@@ -117,6 +117,22 @@ Live swarm accounts on testnet (view `get_agent` via any NEAR RPC):
 
 Judge-facing views: `get_agent` / `get_lot` / `get_bid_scores` / `get_escrow` — read-only, callable through any NEAR RPC. Live testnet smoke scripts in `contracts/hivebid_market/integration/`.
 
+### Why this is novel
+
+- **Swarm-vs-swarm auction, not single agents** — bids come from competing agent *swarms* (each with its own stake, reputation ledger and identity), so the market prices collective capacity, not isolated API keys.
+- **On-chain bid scoring (40/40/20)** — each bid is scored by the contract itself: 40% price vs the lot budget, 40% reputation, 20% delivery speed. No off-chain judge decides the winner.
+- **Reputation-weighted winner — price alone never wins** — the auctioneer is the `get_bid_scores` view; a cheaper bid can lose to a faster, higher-rated one, and the margin is shown on-chain.
+- **Hash-chained AEGIS policy gate with a live audit** — every terminal mutation is gated, logged and hash-linked (`prev_hash → hash`), with a live audit chain (662 records, 541 verified, `broken_at: null`).
+- **NEAR Intents settlement** — payments, escrow and payouts run on NEAR testnet with verifiable transaction hashes; fee-less demonstration flow (escrow = 0 at rest).
+- **Testnet truth, verifiable by anyone** — the entire demo is reproducible by read-only RPC calls: `view_account`, `get_lot`, `get_agent`, `get_bid_scores`, `get_escrow`.
+
+### Maturity
+
+- **100 unit tests** in `hivebid_market` (lib.rs, `#[test]`), plus integration smoke scripts (`testnet-smoke.js`, `poll.js`, `act.js`) verified live against testnet RPC.
+- **Deployed on NEAR testnet**: `hivebid-yksunder.testnet` (code hash `DCcTQUf…` pinned to the repo artifact, 468 209 B wasm) with manager/agent swarm accounts (`hivebid-manager-yks.testnet`, `hivebid-agent-yks.testnet`) operational.
+- **Live ranking model**: 302 projects scored by the HackWatch model (fresh `hackwatch.json`), NEXUS AiOS present in the list.
+- **Live core API audit chain**: 662 records, 541 verified, `broken_at: null` — the policy gate is running and auditable right now.
+
 ---
 
 ## Demo & media
