@@ -15,7 +15,7 @@
 ## Judge's 2-minute path
 
 1. **Demo page** — https://ykbojak-alt.github.io/nexus-aios/demo/ (autoplay replay of a live run + clickable TxHashes).
-2. **Video** — `docs/demo/hackathon-demo.mp4` (3-minute walkthrough, embedded under the replay).
+2. **Video** — `docs/demo/nexus-demo-final.mp4` (99-second recorded HiveBid swarm auction on testnet — live contract reads; embedded on the demo page). Older walkthrough: `docs/demo/hackathon-demo.mp4`.
 3. **On-chain proof** — the 8-hash table below; open any hash on NEAR Testnet explorer.
 4. **Contracts** — `contracts/nexus_escrow/src/lib.rs` (create_task / submit_bid / verify_and_release) and `contracts/hivebid_market/src/lib.rs` (swarm-vs-swarm auction, deployed at `hivebid-yksunder.testnet`).
 5. **Security** — `policies/command_policy.json` + `docs/loopguard_security.md` (allowlists, hash-chained audit).
@@ -138,6 +138,7 @@ Judge-facing views: `get_agent` / `get_lot` / `get_bid_scores` / `get_escrow` �
 ## Demo & media
 
 - 🎮 **Interactive demo** (autoplay terminal replay of the live log + Tx links): https://ykbojak-alt.github.io/nexus-aios/demo/
+- 🎬 **Demo video:** `docs/demo/nexus-demo-final.mp4` — 99-second recorded HiveBid swarm auction on testnet (ROY-A/B/C bids → on-chain scoring 40/40/20 → ROY-C wins, margin +0.087; embedded on the demo page). https://ykbojak-alt.github.io/nexus-aios/demo/nexus-demo-final.mp4
 - 🎬 **3-minute walkthrough:** `docs/demo/hackathon-demo.mp4` (also embedded under the replay; standalone https://ykbojak-alt.github.io/nexus-aios/demo/hackathon-demo.mp4)
 - 📖 **Judge's guide:** `docs/JUDGES_GUIDE.md`
 
