@@ -17,7 +17,7 @@
 1. **Demo page** — https://ykbojak-alt.github.io/nexus-aios/demo/ (autoplay replay of a live run + clickable TxHashes).
 2. **Video** — `docs/demo/hackathon-demo.mp4` (3-minute walkthrough, embedded under the replay).
 3. **On-chain proof** — the 8-hash table below; open any hash on NEAR Testnet explorer.
-4. **Contract** — `contracts/nexus_escrow/src/lib.rs` (create_task / submit_bid / verify_and_release).
+4. **Contracts** — `contracts/nexus_escrow/src/lib.rs` (create_task / submit_bid / verify_and_release) and `contracts/hivebid_market/src/lib.rs` (swarm-vs-swarm auction, deployed at `hivebid-yksunder.testnet`).
 5. **Security** — `policies/command_policy.json` + `docs/loopguard_security.md` (allowlists, hash-chained audit).
 6. **Judge's guide** — `docs/JUDGES_GUIDE.md` (full 5-minute tour, line-by-line evidence reading).
 
@@ -88,6 +88,34 @@ Full lifecycle: `register_agent` (stake + public key), `accept_bid` (freeze winn
 - Each role gets a narrow allowlist (`architect`: plan/hire/verify/create_intent · `research-agent`: search/read_source/cite · `coder`: read_file/write_file/run_test · `auditor`: read-only evidence review).
 - Global deny list: `sign_tx`, `transfer_tokens`, `rm -rf`, `exfiltrate_env`, `post_social`, `export_private_key`, `add_full_access_key`, `transfer_near`. Wallet-signing is structurally unreachable from agent roles.
 - Every decision is appended to a hash-chained JSONL journal (`role`, `command`, `verdict`, `ts`, `prev_hash`, `hash`); `tools/audit_chain.py` fails closed on tampering. Threat model + honest limitations in `docs/loopguard_security.md`.
+
+---
+
+## HiveBid market — swarm-vs-swarm auction (testnet)
+
+Second contract: `contracts/hivebid_market` (Rust, near-sdk), deployed at **[`hivebid-yksunder.testnet`](https://testnet.nearblocks.io/address/hivebid-yksunder.testnet)**.
+
+Autonomous **swarms** (not single agents) bid on posted lots. The contract itself scores every bid — the cheapest price alone never wins:
+
+```
+score = 0.4·(1 − price/budget) + 0.4·rating_eff + 0.2·f_eta
+```
+
+| Factor | Weight | Source |
+|---|---|---|
+| Price vs lot budget (budget = task difficulty) | 40% | `bid.price`, `lot.budget` |
+| Swarm reputation | 40% | `get_rating_eff` — on-chain rating from the task ledger |
+| Promised speed | 20% | `bid.eta_ms` vs `work_deadline_ms`, clamped 0..1 |
+
+Live swarm accounts on testnet (view `get_agent` via any NEAR RPC):
+
+| Swarm | Account | Stake | Rating |
+|---|---|---|---|
+| ROY-A | [`hivebid-agent-yks.testnet`](https://testnet.nearblocks.io/address/hivebid-agent-yks.testnet) | 4.0 NEAR | 0.44 · 1 completed / 1 no-show — ledger on-chain |
+| ROY-B | [`roy-b.hivebid-manager-yks.testnet`](https://testnet.nearblocks.io/address/roy-b.hivebid-manager-yks.testnet) | 1.0 NEAR | 0.50 · newly registered |
+| ROY-C | [`roy-c.hivebid-manager-yks.testnet`](https://testnet.nearblocks.io/address/roy-c.hivebid-manager-yks.testnet) | 1.0 NEAR | 0.50 · newly registered |
+
+Judge-facing views: `get_agent` / `get_lot` / `get_bid_scores` / `get_escrow` — read-only, callable through any NEAR RPC. Live testnet smoke scripts in `contracts/hivebid_market/integration/`.
 
 ---
 

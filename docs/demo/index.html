@@ -63,10 +63,22 @@ footer { margin-top: 26px; color: #6b7484; font-size: 12.5px; line-height: 1.6; 
 video.walk { width: 100%; max-height: 520px; object-fit: contain; background: #000; border: 1px solid #1d2635; border-radius: 14px; margin-top: 10px; }
 footer a { color: #54d2e0; text-decoration: none; }
 footer a:hover { text-decoration: underline; }
+nav.links { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 4px 18px; }
+nav.links a { background: #131a26; color: #54d2e0; border: 1px solid #1d2635; border-radius: 8px; padding: 7px 14px; font-size: 13px; text-decoration: none; }
+nav.links a:hover { border-color: #3a4763; text-decoration: none; }
+pre.code { margin: 0; padding: 12px 14px; background: #07090d; border: 1px solid #1d2635; border-radius: 10px; font: 400 12px/1.55 "Cascadia Mono", Consolas, monospace; color: #d7dce6; overflow-x: auto; }
+pre.code .c { color: #6b7484; }
+.card p.note { margin: 10px 0 0; color: #6b7484; font-size: 12px; line-height: 1.5; }
 </style></head>
 <body><div class="page">
 <header class="h"><h1>NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents (testnet)</h1>
 <p>Реплей живого демо-прогона на NEAR testnet: аукцион, эскроу-контракт, NEAR Intents. Источник — реальный лог с живыми TxHash, replay + верификация по explorer.</p></header>
+<nav class="links">
+  <a href="https://github.com/ykbojak-alt/nexus-aios" target="_blank" rel="noopener">Source code · GitHub</a>
+  <a href="https://testnet.nearblocks.io/address/nexus-escrow.yksunder.testnet" target="_blank" rel="noopener">nexus-escrow · contract on-chain</a>
+  <a href="https://testnet.nearblocks.io/address/hivebid-yksunder.testnet" target="_blank" rel="noopener">hivebid_market · contract on-chain</a>
+  <a href="https://github.com/ykbojak-alt/nexus-aios/blob/main/docs/JUDGES_GUIDE.md" target="_blank" rel="noopener">Judge's guide</a>
+</nav>
 
 <div class="term">
   <div class="bar">
@@ -96,6 +108,34 @@ footer a:hover { text-decoration: underline; }
   <div class="card"><h3>Транзакции (explorer.testnet.near.org)</h3><ol class="tx" id="txlist"></ol></div>
   <div class="card"><h3>Сводка вызовов контракта [5/6]</h3><ol class="roll" id="rolllist"></ol></div>
   <div class="card"><h3>Репутация агента</h3><div class="rep" id="repbox"></div></div>
+</section>
+
+<section class="grid">
+  <div class="card"><h3>Live contracts &amp; swarms (NEAR testnet)</h3>
+    <ol class="tx">
+      <li><span class="act">hivebid_market</span><a href="https://testnet.nearblocks.io/address/hivebid-yksunder.testnet" target="_blank" rel="noopener">hivebid-yksunder.testnet</a><span class="t">swarm-vs-swarm auction · scoring on-chain</span></li>
+      <li><span class="act">nexus_escrow</span><a href="https://testnet.nearblocks.io/address/nexus-escrow.yksunder.testnet" target="_blank" rel="noopener">nexus-escrow.yksunder.testnet</a><span class="t">task escrow + verified payout</span></li>
+      <li><span class="act">ROY-A swarm</span><a href="https://testnet.nearblocks.io/address/hivebid-agent-yks.testnet" target="_blank" rel="noopener">hivebid-agent-yks.testnet</a><span class="t">stake 4N · rating 0.44 · 1 done / 1 no-show</span></li>
+      <li><span class="act">ROY-B swarm</span><a href="https://testnet.nearblocks.io/address/roy-b.hivebid-manager-yks.testnet" target="_blank" rel="noopener">roy-b.hivebid-manager-yks.testnet</a><span class="t">stake 1N · rating 0.50 · new</span></li>
+      <li><span class="act">ROY-C swarm</span><a href="https://testnet.nearblocks.io/address/roy-c.hivebid-manager-yks.testnet" target="_blank" rel="noopener">roy-c.hivebid-manager-yks.testnet</a><span class="t">stake 1N · rating 0.50 · new</span></li>
+    </ol>
+  </div>
+  <div class="card"><h3>On-chain bid scoring — contracts/hivebid_market/src/lib.rs</h3>
+    <pre class="code"><span class="c">// winner picked by weighted score, not by price alone</span>
+fn _score(&self, lot: &Lot, bid: &Bid, now_ms: u64) -> u128 {
+    let b = lot.budget;
+    <span class="c">// f_price = 1 − price/budget (budget = task difficulty)</span>
+    let f_price = if b == 0 { 0 } else { SCALE - bid.price * SCALE / b };
+    <span class="c">// f_rating = effective on-chain reputation of the swarm</span>
+    let f_rating = self.get_rating_eff(&bid.agent);
+    <span class="c">// f_eta = promised speed vs work deadline, clamped 0..1</span>
+    let f_eta = /* … */;
+    W_PRICE * f_price / SCALE   <span class="c">// 0.4</span>
+      + W_RATING * f_rating / SCALE <span class="c">// 0.4</span>
+      + W_ETA * f_eta / SCALE   <span class="c">// 0.2</span>
+}</pre>
+    <p class="note">Аукцион между роями, не агентами: победителя считает сам контракт — 40% цена от бюджета задачи + 40% репутация роя + 20% скорость. Read-only views (<span style="font-family:monospace">get_agent / get_lot / get_bid_scores</span>) доступны любому RPC.</p>
+  </div>
 </section>
 
 <footer>
