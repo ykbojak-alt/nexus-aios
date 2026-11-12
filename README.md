@@ -14,10 +14,10 @@
 
 ## Judge's 2-minute path
 
-1. **Demo page** — https://ykbojak-alt.github.io/nexus-aios/demo/ (autoplay replay of a live run + clickable TxHashes).
-2. **Video** — `docs/demo/nexus-demo-final.mp4` (99-second recorded HiveBid swarm auction on testnet — live contract reads; embedded on the demo page). Older walkthrough: `docs/demo/hackathon-demo.mp4`.
+1. **Demo page** — <https://ykbojak-alt.github.io/nexus-aios/demo/> (replay of a live run with clickable TxHashes).
+2. **Video** — `docs/demo/hackathon-demo.mp4` (3-minute walkthrough: the agent swarm, the policy gate and the on-chain escrow settlement).
 3. **On-chain proof** — the 8-hash table below; open any hash on NEAR Testnet explorer.
-4. **Contracts** — `contracts/nexus_escrow/src/lib.rs` (create_task / submit_bid / verify_and_release) and `contracts/hivebid_market/src/lib.rs` (swarm-vs-swarm auction, deployed at `hivebid-yksunder.testnet`).
+4. **Contracts** — `contracts/nexus_escrow/src/lib.rs` (`create_task` / `submit_bid` / `accept_bid` / `submit_work` / `verify_and_release`).
 5. **Security** — `policies/command_policy.json` + `docs/loopguard_security.md` (allowlists, hash-chained audit).
 6. **Judge's guide** — `docs/JUDGES_GUIDE.md` (full 5-minute tour, line-by-line evidence reading).
 
@@ -45,10 +45,10 @@ Six of the eight hashes below come from the live grand demo run (`docs/evidence/
 | 2 | `register_agent` (stake 0.1 NEAR — **v2** transaction; the live log shows the earlier v1 stake 1.0 NEAR) | [`4ppbsWwu1LSjePJZjfP3Kh2hKFE2BF83Y5yoNGjgKKYZ`](https://testnet.nearblocks.io/txns/4ppbsWwu1LSjePJZjfP3Kh2hKFE2BF83Y5yoNGjgKKYZ) | `contracts/nexus_escrow/README.md` (registration) |
 | 3 | `create_task` (budget 0.050 → escrow) | [`8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG`](https://testnet.nearblocks.io/txns/8rjh5u3eNdh3yufEMLWjXx5d4GPpc9M2FofACgXPKoKG) | live log |
 | 4 | `submit_bid` — winning (verified) | [`EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4`](https://testnet.nearblocks.io/txns/EhvnXop5US32hUdVg6Bg1qvsDE2vKwGZgstvkKkWsMu4) | live log |
-| 5 | `submit_bid` — **FAILED** (WASM trap, bad sig) | [`Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L`](https://testnet.nearblocks.io/txns/Ej9Z73ZFGJD7TyNcdRvLWfKQRKCh1MGrD3x4iCEzhs5L) | live log |
+| 5 | `submit_bid` — **FAILED** (WASM trap, bad sig) | [`Ej9Z73ZFGJD7TyNcdRvLWjKQRKCh1MGrD3x4iCEzhs5L`](https://testnet.nearblocks.io/txns/Ej9Z73ZFGJD7TyNcdRvLWjKQRKCh1MGrD3x4iCEzhs5L) | live log |
 | 6 | `accept_bid` (winner frozen) | [`6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC`](https://testnet.nearblocks.io/txns/6uf4LLCNH68BYdPAYDxgNG5w9PpWZonPnKhh1cFTn6KC) | live log |
 | 7 | `submit_work` (result hash) | [`E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB`](https://testnet.nearblocks.io/txns/E6Y1NpkFw1EhhsRW9EGZ6bjJi8rz3SFhQAoPN6HSuDTB) | live log |
-| 8 | `verify_and_release` (payout + refund) | [`3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn`](https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFfHExHDhaZQU3vn) | live log |
+| 8 | `verify_and_release` (payout + refund) | [`3cnsZBWwQeo9zUtCEvb2up9iBcbLGFxHExHDhaZQU3vn`](https://testnet.nearblocks.io/txns/3cnsZBWwQeo9zUtCEvb2up9iBcbLGFxHExHDhaZQU3vn) | live log |
 
 > **Explorer note:** this table links to **nearblocks** (`testnet.nearblocks.io`). The demo page (`docs/demo/index.html`) links to **explorer** (`explorer.testnet.near.org`). Both are valid NEAR Testnet explorers; the URLs point to the same transactions.
 
@@ -91,55 +91,10 @@ Full lifecycle: `register_agent` (stake + public key), `accept_bid` (freeze winn
 
 ---
 
-## HiveBid market — swarm-vs-swarm auction (testnet)
-
-Second contract: `contracts/hivebid_market` (Rust, near-sdk), deployed at **[`hivebid-yksunder.testnet`](https://testnet.nearblocks.io/address/hivebid-yksunder.testnet)**.
-
-Autonomous **swarms** (not single agents) bid on posted lots. The contract itself scores every bid — the cheapest price alone never wins:
-
-```
-score = 0.4·(1 − price/budget) + 0.4·rating_eff + 0.2·f_eta
-```
-
-| Factor | Weight | Source |
-|---|---|---|
-| Price vs lot budget (budget = task difficulty) | 40% | `bid.price`, `lot.budget` |
-| Swarm reputation | 40% | `get_rating_eff` — on-chain rating from the task ledger |
-| Promised speed | 20% | `bid.eta_ms` vs `work_deadline_ms`, clamped 0..1 |
-
-Live swarm accounts on testnet (view `get_agent` via any NEAR RPC):
-
-| Swarm | Account | Stake | Rating |
-|---|---|---|---|
-| ROY-A | [`hivebid-agent-yks.testnet`](https://testnet.nearblocks.io/address/hivebid-agent-yks.testnet) | 4.0 NEAR | 0.44 · 1 completed / 1 no-show — ledger on-chain |
-| ROY-B | [`roy-b.hivebid-manager-yks.testnet`](https://testnet.nearblocks.io/address/roy-b.hivebid-manager-yks.testnet) | 1.0 NEAR | 0.50 · newly registered |
-| ROY-C | [`roy-c.hivebid-manager-yks.testnet`](https://testnet.nearblocks.io/address/roy-c.hivebid-manager-yks.testnet) | 1.0 NEAR | 0.50 · newly registered |
-
-Judge-facing views: `get_agent` / `get_lot` / `get_bid_scores` / `get_escrow` — read-only, callable through any NEAR RPC. Live testnet smoke scripts in `contracts/hivebid_market/integration/`.
-
-### Why this is novel
-
-- **Swarm-vs-swarm auction, not single agents** — bids come from competing agent *swarms* (each with its own stake, reputation ledger and identity), so the market prices collective capacity, not isolated API keys.
-- **On-chain bid scoring (40/40/20)** — each bid is scored by the contract itself: 40% price vs the lot budget, 40% reputation, 20% delivery speed. No off-chain judge decides the winner.
-- **Reputation-weighted winner — price alone never wins** — the auctioneer is the `get_bid_scores` view; a cheaper bid can lose to a faster, higher-rated one, and the margin is shown on-chain.
-- **Hash-chained AEGIS policy gate with a live audit** — every terminal mutation is gated, logged and hash-linked (`prev_hash → hash`), with a live audit chain (662 records, 541 verified, `broken_at: null`).
-- **NEAR Intents settlement** — payments, escrow and payouts run on NEAR testnet with verifiable transaction hashes; fee-less demonstration flow (escrow = 0 at rest).
-- **Testnet truth, verifiable by anyone** — the entire demo is reproducible by read-only RPC calls: `view_account`, `get_lot`, `get_agent`, `get_bid_scores`, `get_escrow`.
-
-### Maturity
-
-- **100 unit tests** in `hivebid_market` (lib.rs, `#[test]`), plus integration smoke scripts (`testnet-smoke.js`, `poll.js`, `act.js`) verified live against testnet RPC.
-- **Deployed on NEAR testnet**: `hivebid-yksunder.testnet` (code hash `DCcTQUf…` pinned to the repo artifact, 468 209 B wasm) with manager/agent swarm accounts (`hivebid-manager-yks.testnet`, `hivebid-agent-yks.testnet`) operational.
-- **Live ranking model**: 302 projects scored by the HackWatch model (fresh `hackwatch.json`), NEXUS AiOS present in the list.
-- **Live core API audit chain**: 662 records, 541 verified, `broken_at: null` — the policy gate is running and auditable right now.
-
----
-
 ## Demo & media
 
-- 🎮 **Interactive demo** (autoplay terminal replay of the live log + Tx links): https://ykbojak-alt.github.io/nexus-aios/demo/
-- 🎬 **Demo video:** `docs/demo/nexus-demo-final.mp4` — 99-second recorded HiveBid swarm auction on testnet (ROY-A/B/C bids → on-chain scoring 40/40/20 → ROY-C wins, margin +0.087; embedded on the demo page). https://ykbojak-alt.github.io/nexus-aios/demo/nexus-demo-final.mp4
-- 🎬 **3-minute walkthrough:** `docs/demo/hackathon-demo.mp4` (also embedded under the replay; standalone https://ykbojak-alt.github.io/nexus-aios/demo/hackathon-demo.mp4)
+- 🎮 **Interactive demo** (replay of the live log with Tx links): <https://ykbojak-alt.github.io/nexus-aios/demo/>
+- 🎬 **Demo video:** `docs/demo/hackathon-demo.mp4` — 3-minute walkthrough: the agent swarm, the LoopGuard allowlists and the on-chain escrow settlement.
 - 📖 **Judge's guide:** `docs/JUDGES_GUIDE.md`
 
 ---
@@ -172,10 +127,8 @@ python tools/test_agent.py            # 13 tests: payment + LoopGuard + orchestr
 
 The full NEXUS AiOS (UI, orchestration, Unreal integration) lives in a private repo. This repository is the hackathon-focused slice: Research Agent, AI-2 runtime adapter (`docs/ai2_runtime_example/research_agent.py`), security policies, and the escrow contract — everything a judge needs to verify the claims.
 
-## Second submission — HackWatch (Q-015 disclosure)
+## Second submission — HiveBid (Q-015 disclosure)
 
-NEXUS AiOS is an independent first submission by the same participant as [HackWatch](https://github.com/ykbojak-alt/hackwatch). Both projects disclose each other under hackathon rule Q-015.
+NEXUS AiOS is an independent first submission by the same participant as [HiveBid](https://github.com/ykbojak-alt/hivebid). Both projects disclose each other under hackathon rule Q-015: NEXUS AiOS is the agent-orchestration platform (research agent, escrow settlement, LoopGuard policy gate); HiveBid is the on-chain swarm auction market (escrow, weighted bid scoring, ratings, slashing). The two repositories are separate: each has its own contract, its own tests and its own demo recording.
 
-NEXUS AiOS — независимая первая заявка того же участника, что и [HackWatch](https://github.com/ykbojak-alt/hackwatch). Оба проекта раскрывают свою связь друг с другом согласно правилу хакатона Q-015.
-
-Local farm metric: agent scores from completed waves (the latest wave changes the score, e.g. 7.75 -> 7.88). Snapshot: docs/evidence/farm-score.json.
+NEXUS AiOS — независимая первая заявка того же участника, что и [HiveBid](https://github.com/ykbojak-alt/hivebid). Оба проекта раскрывают свою связь друг с другом согласно правилу хакатона Q-015: NEXUS AiOS — платформа оркестрации агентов (исследовательский агент, расчёты через escrow, policy-gate LoopGuard), HiveBid — on-chain рынок аукционов между роями агентов. Репозитории раздельные: у каждого свой контракт, свои тесты и своя запись демо.

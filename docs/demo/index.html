@@ -5,10 +5,10 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="favicon-64.png" sizes="64x64">
 <link rel="apple-touch-icon" href="favicon-256.png">
-<meta property="og:title" content="NEXUS GRAND DEMO — HiveBid on-chain auction">
-<meta property="og:description" content="Recorded NEAR testnet demo: swarm bids, on-chain scoring, award, escrow settle.">
+<meta property="og:title" content="NEXUS AiOS — on-chain escrow settlement for an agent swarm (testnet)">
+<meta property="og:description" content="Recorded NEAR testnet run: agent swarm hires a verified worker, escrow pays out on chain.">
 <meta property="og:type" content="website">
-<title>NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents (testnet)</title>
+<title>NEXUS AiOS — on-chain эскроу: аукцион + NEAR Intents (testnet)</title>
 <style>
 :root { color-scheme: dark; }
 * { box-sizing: border-box; }
@@ -77,19 +77,19 @@ pre.code .c { color: #6b7484; }
 .card p.note { margin: 10px 0 0; color: #6b7484; font-size: 12px; line-height: 1.5; }
 </style></head>
 <body><div class="page">
-<header class="h"><h1>NEXUS GRAND DEMO — on-chain эскроу: аукцион + NEAR Intents (testnet)</h1>
+<header class="h"><h1>NEXUS AiOS — on-chain эскроу: аукцион + NEAR Intents (testnet)</h1>
 <p>Реплей живого демо-прогона на NEAR testnet: аукцион, эскроу-контракт, NEAR Intents. Источник — реальный лог с живыми TxHash, replay + верификация по explorer.</p></header>
 <nav class="links">
   <a href="https://github.com/ykbojak-alt/nexus-aios" target="_blank" rel="noopener">Source code · GitHub</a>
   <a href="https://testnet.nearblocks.io/address/nexus-escrow.yksunder.testnet" target="_blank" rel="noopener">nexus-escrow · contract on-chain</a>
-  <a href="https://testnet.nearblocks.io/address/hivebid-yksunder.testnet" target="_blank" rel="noopener">hivebid_market · contract on-chain</a>
   <a href="https://github.com/ykbojak-alt/nexus-aios/blob/main/docs/JUDGES_GUIDE.md" target="_blank" rel="noopener">Judge's guide</a>
+  <a href="https://github.com/ykbojak-alt/hivebid" target="_blank" rel="noopener">Second submission · HiveBid</a>
 </nav>
 
 <section>
   <h2>Demo video</h2>
-  <video controls width="100%" src="nexus-demo-final.mp4" poster="poster.jpg" style="display:block;border:1px solid #1d2635;border-radius:14px"></video>
-  <p style="margin:8px 0 0;color:#6b7484;font-size:12px">Recorded demo on NEAR testnet — live contract reads; rate-limit pauses cut. 99&nbsp;s, voice-over. Vertical cut for mobile: <a href="nexus-demo-vertical.mp4" style="color:#35d0e0">nexus-demo-vertical.mp4</a> (1080×1920).</p>
+  <video controls width="100%" src="hackathon-demo.mp4" style="display:block;border:1px solid #1d2635;border-radius:14px"></video>
+  <p style="margin:8px 0 0;color:#6b7484;font-size:12px">3-минутный walkthrough: рой агентов, policy-gate LoopGuard и on-chain расчёт через <code>nexus-escrow</code>. 180&nbsp;s, 720p.</p>
 </section>
 
 <div class="term">
@@ -111,9 +111,15 @@ pre.code .c { color: #6b7484; }
 </div>
 
 <section>
-  <div class="card"><h3>Готовый 3-мин walkthrough</h3>
-  <p class="k" style="margin:0 0 4px;color:#8b93a3;font-size:13px;">…или смотреть готовый 3-мин walkthrough</p>
-  <video class="walk" controls preload="metadata" src="hackathon-demo.mp4"></video></div>
+  <div class="card"><h3>Как считается расчёт</h3>
+    <pre class="code"><span class="c">// contracts/nexus_escrow/src/lib.rs</span>
+create_task(task_id, deadline_ms)   <span class="c">// payable = budget → escrow</span>
+submit_bid(task_id, price, signature)<span class="c">// ed25519_verify on-chain</span>
+accept_bid(task_id)                 <span class="c">// winner frozen</span>
+submit_work(task_id, work_hash)     <span class="c">// результат агента</span>
+verify_and_release(task_id)         <span class="c">// платит победителю, остаток — менеджеру</span></pre>
+    <p class="note">Ставка проверяется на цепочке: <span style="font-family:monospace">env::ed25519_verify</span> по <span style="font-family:monospace">bid:{task}:{agent}:{price}</span> против зарегистрированного публичного ключа агента. Деплой и регистрация агента — tx №1 и №2 в таблице README, остальные шесть — из живого прогона.</p>
+  </div>
 </section>
 
 <section class="grid">
@@ -123,38 +129,32 @@ pre.code .c { color: #6b7484; }
 </section>
 
 <section class="grid">
-  <div class="card"><h3>Live contracts &amp; swarms (NEAR testnet)</h3>
+  <div class="card"><h3>Live contracts (NEAR testnet)</h3>
     <ol class="tx">
-      <li><span class="act">hivebid_market</span><a href="https://testnet.nearblocks.io/address/hivebid-yksunder.testnet" target="_blank" rel="noopener">hivebid-yksunder.testnet</a><span class="t">swarm-vs-swarm auction · scoring on-chain</span></li>
       <li><span class="act">nexus_escrow</span><a href="https://testnet.nearblocks.io/address/nexus-escrow.yksunder.testnet" target="_blank" rel="noopener">nexus-escrow.yksunder.testnet</a><span class="t">task escrow + verified payout</span></li>
-      <li><span class="act">ROY-A swarm</span><a href="https://testnet.nearblocks.io/address/hivebid-agent-yks.testnet" target="_blank" rel="noopener">hivebid-agent-yks.testnet</a><span class="t">stake 4N · rating 0.44 · 1 done / 1 no-show</span></li>
-      <li><span class="act">ROY-B swarm</span><a href="https://testnet.nearblocks.io/address/roy-b.hivebid-manager-yks.testnet" target="_blank" rel="noopener">roy-b.hivebid-manager-yks.testnet</a><span class="t">stake 1N · rating 0.50 · new</span></li>
-      <li><span class="act">ROY-C swarm</span><a href="https://testnet.nearblocks.io/address/roy-c.hivebid-manager-yks.testnet" target="_blank" rel="noopener">roy-c.hivebid-manager-yks.testnet</a><span class="t">stake 1N · rating 0.50 · new</span></li>
+      <li><span class="act">manager</span><a href="https://testnet.nearblocks.io/address/yksunder.testnet" target="_blank" rel="noopener">yksunder.testnet</a><span class="t">поставил задачу с бюджетом 0.050 NEAR</span></li>
+      <li><span class="act">research agent</span><a href="https://testnet.nearblocks.io/address/research-bot.testnet" target="_blank" rel="noopener">research-bot.testnet</a><span class="t">победитель: 0.0239 NEAR, подпись ed25519 проверена на цепи</span></li>
     </ol>
   </div>
-  <div class="card"><h3>On-chain bid scoring — contracts/hivebid_market/src/lib.rs</h3>
-    <pre class="code"><span class="c">// winner picked by weighted score, not by price alone</span>
-fn _score(&self, lot: &Lot, bid: &Bid, now_ms: u64) -> u128 {
-    let b = lot.budget;
-    <span class="c">// f_price = 1 − price/budget (budget = task difficulty)</span>
-    let f_price = if b == 0 { 0 } else { SCALE - bid.price * SCALE / b };
-    <span class="c">// f_rating = effective on-chain reputation of the swarm</span>
-    let f_rating = self.get_rating_eff(&bid.agent);
-    <span class="c">// f_eta = promised speed vs work deadline, clamped 0..1</span>
-    let f_eta = /* … */;
-    W_PRICE * f_price / SCALE   <span class="c">// 0.4</span>
-      + W_RATING * f_rating / SCALE <span class="c">// 0.4</span>
-      + W_ETA * f_eta / SCALE   <span class="c">// 0.2</span>
-}</pre>
-    <p class="note">Аукцион между роями, не агентами: победителя считает сам контракт — 40% цена от бюджета задачи + 40% репутация роя + 20% скорость. Read-only views (<span style="font-family:monospace">get_agent / get_lot / get_bid_scores</span>) доступны любому RPC.</p>
-    <p class="note"><strong>Novelty:</strong> swarm-vs-swarm auction, on-chain 40/40/20 bid scoring, reputation-weighted winner — price alone never wins.</p>
-    <p class="note"><strong>Maturity:</strong> 100 unit tests, deployed contract on NEAR testnet, 302-project live ranking model, live API audit chain (662 records, 541 verified).</p>
+  <div class="card"><h3>Policy gate — LoopGuard</h3>
+    <pre class="code"><span class="c">// policies/command_policy.json — deny-by-default</span>
+architect      plan decompose hire verify create_intent
+research-agent search read_source cite submit_bid submit_work
+coder          read_file write_file run_test
+auditor        read_report read_log tally
+
+<span class="c">// global deny</span>
+sign_tx · transfer_tokens · rm -rf · exfiltrate_env
+post_social · export_private_key · add_full_access_key
+transfer_near · send_near</pre>
+    <p class="note">Каждое решение пишется в hash-chained журнал (<span style="font-family:monospace">role, command, verdict, ts, prev_hash, hash</span>); <span style="font-family:monospace">tools/audit_chain.py</span> проверяет цепочку и падает при подмене. Модель угроз и честные ограничения — <a href="https://github.com/ykbojak-alt/nexus-aios/blob/main/docs/loopguard_security.md" style="color:#35d0e0">docs/loopguard_security.md</a>.</p>
   </div>
 </section>
 
 <footer>
   Источник: <a href="../evidence/grand-demo-live-2026-11-02.log" target="_blank" rel="noopener">docs/evidence/grand-demo-live-2026-11-02.log</a>
-  (NEXUS GRAND DEMO, live-прогон на NEAR testnet, 2026-11-02). Страница статическая — автопубликация через GitHub Pages из docs/.
+  (живой прогон на NEAR testnet, 2026-11-02). Страница статическая — автопубликация через GitHub Pages из docs/.
+  <br>Вторая, независимая заявка того же участника: <a href="https://github.com/ykbojak-alt/hivebid" target="_blank" rel="noopener">HiveBid</a> — on-chain рынок аукционов между роями агентов (правило хакатона Q-015).
 </footer>
 </div>
 <script>

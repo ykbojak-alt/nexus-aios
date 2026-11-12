@@ -1,4 +1,0 @@
-{"seq": 0, "ts": 1793362535.172, "run_id": "trading-1793362535-af36f3", "type": "run_start", "schema": "0.1", "task_id": "торговая задача: BTC/USDT; направление buy; условия rsi_oversold trend_up sentiment_unknown; цена 77511.20; RSI 28.0", "evaluator_hash": "", "constitution_hash": ""}
-{"seq": 1, "ts": 1793362535.172, "run_id": "trading-1793362535-af36f3", "type": "config", "name": "trading", "models": {"swarm": "60 агентов"}}
-{"seq": 2, "ts": 1793362535.173, "run_id": "trading-1793362535-af36f3", "type": "learning", "lessons": [], "issues": ["файл уроков не найден: D:\\near-hackathon-nexus\\runs\\trading\\lessons.json"]}
-{"seq": 3, "ts": 1793362548.291, "run_id": "trading-1793362535-af36f3", "type": "outcome", "success": false, "score": 0.0, "evaluator": "marginpad", "evaluator_hash": "", "label_source": "marginpad_api", "detail": "trade_loss:buy_oversold"}

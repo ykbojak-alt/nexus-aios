@@ -1,75 +1,37 @@
-# Вторая заявка — Hackathon Watch (проект «HackWatch»)
+# Second submission — HiveBid
 
-Дата фиксации: 2026-11-03. Статус: **решение принято, реализация не начата.**
+The second project submitted under hackathon rule **Q-015** ("one person, several
+projects?"): one participant may enter **up to two** projects, provided they are
+independent **and each README names the other one**.
 
-## Правовая база (проверено по официальным правилам)
-
-Источник: `https://nearhackathon.com/HACKATHON.md` (живая версия правил).
-
-- **Q-015 «One person, several projects?»** — разрешено **не более 2 заявок на человека**,
-  если проекты **независимые** и это **раскрыто**: README каждого проекта называет
-  другой проект. Один и тот же проект дважды подавать нельзя.
-- Лимит исчерпан наполовину: NEXUS AiOS — заявка №1 (позиция 81 в каталоге,
-  треки `swarms`, `security`, `agents`). Остаётся **ровно одна** заявка.
-- Одна заявка = один репозиторий; повторная подача того же репо отклоняется.
-- Дедлайн разработки/сабмишна: **2026-11-14T23:59:00Z**. Судейство 16–18.11.
-- Q-017: первичный скрининг делают Claude Code и Codex — README пишем и под
-  машинного читателя (что это, какая проблема, шаги «сделай X — увидишь Y»).
-- Q-012: локальное демо допустимо (публичный репо + воспроизводимый README +
-  X-пост с видео); hosted demo — плюс.
-
-## Продукт
-
-**HackWatch** — **верифицируемый скрининг-слой для хакатонов, грант-программ и
-турниров**. Пайплайн читает каталог заявок, анализирует каждую через LLM
-(зрелость, демо, соответствие теме, threat, развёрнутый details-отчёт с
-атрибуцией оценщика) и публикует оценки в on-chain реестре — публично
-проверяемый рейтинг вместо чёрного ящика.
-
-Нарратив для заявки: «AI-скрининг уже есть в процессе любого крупного хакатона
-(см. Q-017 — организаторы сами сажают ботов на первичный просмотр). Мы делаем
-этот слой открытым: любой судья может запустить свою независимую оценку,
-каждая оценка подписана моделью и записана on-chain — воспроизводимо,
-апеллируемо, прозрачно. Финал всегда за людьми — мы сортируем, не решаем».
-
-### Провайдер-нейтральность (конфиг)
-
-- `provider`: endpoint + model + key — OpenAI-compatible API. **В публичном
-  репо поля пустые**: пользователь вписывает свой провайдер и ключ.
-- Наша версия (отдельная, не в публичном репо): провайдер = NexusLink
-  `nip.io:4435` с выбором слота/алиаса (mercury-3 и т.д.), scoped `nlk-*` ключ.
-- Любой может повторить оценку на своей модели и сравнить — это и есть
-  «независимая оценка» из нарратива.
-
-### Треки (предварительно)
-
-- `agents` — основной (агентный пайплайн оценки)
-- возможно `security` — если подать как аудит/анализ заявок
-- решить при подаче: не растягивать по трекам, где не вписывается
-
-## Реализация — раздача (когда узлы освободятся)
-
-| Часть | Исполнитель | Содержание |
+| | Submission №1 | Submission №2 |
 |---|---|---|
-| Контракт `hackwatch_scores` | **F.O.R.G.E.** | новый мини-контракт (~60 строк Rust): `set_score(project_id, score, note)` — только owner; `get_score(project_id)`; `get_all()`. Паттерн — как `contracts/nexus_escrow`. Деплой на testnet-аккаунт `hackwatch.yksunder.testnet`. Только Testnet. |
-| Клиент в hackwatch | **A.C.E.** | после LLM-прогона писать топ-N оценок on-chain через `tools/near_contract_client.py` (как образец); выводить TxHash на строку. |
-| UI-бейдж TxHash | **F.O.R.G.E.** | в таблице Hackathon Watch — колонка/ссылка на testnet-транзакцию записи оценки. |
-| README HackWatch | **C.O.D.E.X.** | новый репо: описание, проблема, шаги «do X — see Y», раскрытие второго проекта (ссылка на NEXUS AiOS). Под машинного читателя (Q-017). |
-| Раскрытие в NEXUS README | **C.O.D.E.X.** | в README `near-hackathon-nexus` — секция «Second project by the same team: Hackathon Watch (link)». |
-| LLM-прогон через nip.io:4435 | **A.C.E.** | уже в работе: реальные оценки вместо heuristic-ничьей 8.4. |
+| Project | **NEXUS AiOS** | **HiveBid** |
+| Repository | this repository | <https://github.com/ykbojak-alt/hivebid> |
+| Product | agent-orchestration platform: research agent, escrow settlement, LoopGuard policy gate | on-chain swarm auction market: escrow, weighted bid scoring, ratings, slashing |
+| Contract | `contracts/nexus_escrow` — `nexus-escrow.yksunder.testnet` | `contracts/hivebid_market` — `hivebid-yksunder.testnet` |
+| Demo recording | `docs/demo/hackathon-demo.mp4` + the published demo page | `docs/demo/nexus-demo-voiced-final.mp4` + its own published demo page |
 
-## Что НЕ делать
+## Why they are independent
 
-- Не подавать вторую заявку до завершения on-chain части и README.
-- Не использовать выдуманную личность: заявка идёт от того же человека (лимит 2/чел — легально).
-- Только Testnet; mainnet-пейаут-адрес в форме — реальный named-аккаунт (решает User).
-- Не коммитить без явного «закоммить».
+- **Different products.** NEXUS AiOS hires and pays individual specialised agents
+  and settles through `nexus-escrow` with an ed25519-verified bid. HiveBid is a
+  market where *swarms* compete for a lot and the contract itself scores the
+  bids.
+- **Separate repositories, separate contracts, separate tests, separate demo
+  recordings.** This repository contains no HiveBid code and no HiveBid media;
+  the HiveBid repository contains no NEXUS code and no NEXUS media.
+- **The disclosure is in both READMEs.** Each README names the other project and
+  links to its repository, as the rule requires.
 
-## Чек-лист к сабмишну
+## Platform rules this submission follows
 
-- [ ] контракт задеплоен на testnet, TxHash записей виден в UI
-- [ ] README HackWatch: проблема, NEAR-роль конкретно, do X — see Y, ссылка на NEXUS AiOS
-- [ ] README NEXUS AiOS: обратная ссылка на HackWatch
-- [ ] репо HackWatch публичный, LICENSE
-- [ ] X-пост с демо-видео (публикует User, текст драфтим мы)
-- [ ] payload заявки распечатан и подтверждён User'ом до отправки
+- Development window: 1–14 Nov 2026; submission deadline 14 Nov 2026, 23:59 UTC;
+  results by 18 Nov 2026.
+- The repository is **public**, the demo post is **public**, and both links are
+  in the submission form.
+- One submission per project.
+- The demo post states the project was built at NEAR HACKATHON, tags
+  @NEARProtocol and #NEARHackathon, and attaches the demo video.
+- Testnet only: no mainnet accounts, no mainnet transfers, no key material in
+  either repository.

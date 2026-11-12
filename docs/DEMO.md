@@ -38,4 +38,3 @@ Demo: https://ykbojak-alt.github.io/nexus-aios/demo/
 - Whenever showing the receipt, keep the real Testnet TxHashes visible and state that settlement ran on NEAR Testnet, not mainnet.
 - The unit-test output is a local verification result; the on-chain evidence is the Testnet TxHashes in the demo log.
 
-Local farm metric: agent scores from completed waves (the latest wave changes the score, e.g. 7.75 -> 7.88). Snapshot: docs/evidence/farm-score.json.
