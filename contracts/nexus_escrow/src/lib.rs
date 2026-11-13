@@ -347,7 +347,7 @@ impl NexusEscrow {
 
     // ------------------------------------------------------------- views
 
-    /// Агент + репутация — JSON-объект (читается судьями и Qoder-парсером).
+    /// Агент + репутация — JSON-объект (читается судьями и off-chain парсером).
     pub fn get_agent(&self, agent_id: AccountId) -> Option<String> {
         self.agents.get(&agent_id).map(|a| {
             format!(

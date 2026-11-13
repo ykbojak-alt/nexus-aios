@@ -81,7 +81,7 @@ def test_uncited_answer_does_not_pay():
 def test_unverified_no_pay():
     payer = NearIntentPayer()
     bad = "Fact. [Source: https://fake.example/x]"
-    orig = ra.synthesize_nebius
+    originals = _install_verified_mock()
 
     async def fake_synth(q, ctx):
         return bad
@@ -90,7 +90,7 @@ def test_unverified_no_pay():
     try:
         result = asyncio.run(ra.run_research("q", payer=payer))
     finally:
-        ra.synthesize_nebius = orig
+        _restore_research(originals)
     assert result["unverified"]
     assert result["payment"] is None
     assert payer.receipts == []
