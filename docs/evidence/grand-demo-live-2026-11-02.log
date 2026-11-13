@@ -1,8 +1,3 @@
-Error in import line from C:\Users\BoJaK\AppData\Roaming\Python\Python315\site-packages\distutils-precedence.pth: import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim();
-  Traceback (most recent call last):
-    File "<frozen site>", line 539, in _exec_imports
-    File "<string>", line 1, in <module>
-  AttributeError: module '_distutils_hack' has no attribute 'add_shim'
  ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗
  ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝
  ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗
